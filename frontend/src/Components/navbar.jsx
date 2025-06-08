@@ -40,7 +40,7 @@ const Navbar = ({setShowLogin}) => {
 
             </div>
 
-          : <button className='text-sm bg-blue-500 px-3 py-2 mt-5 rounded-full text-gray-100 font-semibold' onClick={sumbitBtn}>Create acoount</button>
+          : <button className='text-sm bg-blue-500 px-3 py-2 mt-5 rounded-full text-gray-100 font-semibold' onClick={sumbitBtn}>Create</button>
         }
 
       </div>
