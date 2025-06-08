@@ -12,12 +12,12 @@ const Navbar = ({setShowLogin}) => {
 
   return (
 
-    <div className='flex items-center justify-between border-b-2 pb-3 bg-sky-200 md:px-20 px-8 w-full text-sm border-b-gray-400'>
+    <div className='flex items-center justify-between border-b-2 pb-3 bg-sky-200 md:px-20 lg:px-20  px-2 w-full text-sm border-b-gray-400'>
 
       <img src={assets.logo} alt="" className="w-28 lg:w-32 cursor-pointer" onClick={()=>navigate('/')}/>
       
-      <ul className='hidden md:flex  items-start gap-8 font-medium'>
-        <NavLink to='/'><li className='text-base mt-5 '>Home</li><hr className='border-none outline-none h-0.5 bg-gray-400 m-auto hidden'/></NavLink>
+      <ul className='flex items-start md:gap-8 lg:gap-8 gap-3  md:font-medium text-xs'>
+        <NavLink to='/'><li className='text-base mt-5 md:block lg:block hidden'>Home</li><hr className='border-none outline-none h-0.5 bg-gray-400 m-auto hidden'/></NavLink>
         <NavLink to='/doctor'><li className='text-base mt-5' >Doctors</li><hr className='border-none outline-none h-0.5 bg-gray-400 m-auto hidden'/></NavLink>
         <NavLink to='/about'><li className='text-base mt-5 ' >About</li><hr className='border-none outline-none h-0.5 bg-gray-400 m-auto hidden'/></NavLink>
         <NavLink to='/contact'><li className='text-base mt-5 ' >Contact</li><hr className='border-none outline-none h-0.5 bg-gray-400 m-auto hidden'/></NavLink>
