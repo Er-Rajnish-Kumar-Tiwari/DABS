@@ -78,9 +78,8 @@ const addDoctor=async(req,res)=>{
     }
 
     catch (error) {
-        res.json({Status:"400",Messege:"Some error",error:error});
         console.log(error);
-        
+        res.json({Status:"400",Messege:"Some error",error:error});
     }
 
 };
