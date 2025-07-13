@@ -1,59 +1,73 @@
-import React, { useContext, useState } from 'react';
-import { FaTimes } from 'react-icons/fa';
-import Navbar from '../Components/navbar';
-import { AdminContext } from '../Context/adminContext';
-import axios from 'axios';
+import React, { useContext, useEffect, useState } from "react";
+import { FaTimes } from "react-icons/fa";
+import Navbar from "../Components/navbar";
+import { AdminContext } from "../Context/adminContext";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const LoginPage = () => {
   const [showLoginCard, setShowLoginCard] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [state,setState]=useState("Admin");
-  const {setAToken,atoken,backendUrl}=useContext(AdminContext);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [state, setState] = useState("Admin");
 
-  const handleLogin = async(e) => {
+  const { setAToken, atoken } = useContext(AdminContext);
+  const [isLoggedIn, setIsLoggedIn] = useState(() => !!localStorage.getItem("atoken"));
+
+  useEffect(() => {
+    if (atoken) {
+      setIsLoggedIn(true);
+    }
+  }, [atoken]);
+
+  const handleLogin = async (e) => {
     e.preventDefault();
-
     try {
-      
-      if(state==="Admin"){
+      const route = state === "Admin" ? "/adminLogin" : "/doctorLogin";
+      const response = await axios.post(
+        `https://dabs-backend.onrender.com${route}`,
+        { email, password }
+      );
 
-        const {data}=await axios.post(backendUrl+'/adminLogin',{email,password});
-        if(data){
-          console.log(data);
-        }
+      if (response.data.Messege === "Admin Login Successfully") {
+        setAToken(response.data.token);
+        localStorage.setItem("atoken", response.data.token); 
+        setIsLoggedIn(true);
+        setShowLoginCard(false);
+        setEmail("");
+        setPassword("");
+        toast.success(response.data.Messege);
       }
-      else{
-
+       else if (response.data.Messege === "Wrong admin details") {
+        toast.error(response.data.Messege + " Try again!");
       }
-
+       else {
+        toast.warning("Something went wrong with the network!");
+      }
     } 
     catch (error) {
-      
+      console.log("Login Error:", error);
+      toast.error("Login failed. Please check your details or try again.");
     }
-
   };
 
   const handleLogout = () => {
     setIsLoggedIn(false);
-    setEmail('');
-    setPassword('');
+    setAToken("");
+    localStorage.removeItem("atoken"); 
+    toast.success("Logout Successfully!");
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-blue-100">
-      {/* Navbar */}
       <Navbar
         isLoggedIn={isLoggedIn}
         onLoginClick={() => setShowLoginCard(true)}
         onLogoutClick={handleLogout}
       />
 
-      {/* Login Card */}
       {showLoginCard && !isLoggedIn && (
         <div className="max-w-sm mx-auto mt-10 bg-white rounded-lg shadow-lg p-6 relative">
-
           <button
             onClick={() => setShowLoginCard(false)}
             className="absolute top-2 right-3 text-gray-600 hover:text-red-500"
@@ -61,8 +75,11 @@ const LoginPage = () => {
             <FaTimes size={20} />
           </button>
 
-          <h2 className="text-xl font-bold text-center mb-4 text-orange-800 ">
-            <span className='text-blue-500'>{state} Login in Tanish All In <br /> <span className='text-gray-500'>One Health Care</span></span>
+          <h2 className="text-xl font-bold text-center mb-4 text-orange-800">
+            <span className="text-blue-500">
+              {state} Login in Tanish All In <br />
+              <span className="text-gray-500">One Health Care</span>
+            </span>
           </h2>
 
           <input
@@ -88,12 +105,27 @@ const LoginPage = () => {
             Login
           </button>
 
-          {
-            state==="Admin"
-            ? <p className='text-gray-700 font-semibold'>Doctor Login <span className='text-blue-600 cursor-pointer underline' onClick={()=>setState("Doctor")}>Click here</span></p>
-            : <p className='text-gray-700 font-semibold'>Admin Login <span className='text-blue-600 cursor-pointer underline' onClick={()=>setState("Admin")}>Click here</span></p>
-          }
-
+          {state === "Admin" ? (
+            <p className="text-gray-700 font-semibold">
+              Doctor Login{" "}
+              <span
+                className="text-blue-600 cursor-pointer underline"
+                onClick={() => setState("Doctor")}
+              >
+                Click here
+              </span>
+            </p>
+          ) : (
+            <p className="text-gray-700 font-semibold">
+              Admin Login{" "}
+              <span
+                className="text-blue-600 cursor-pointer underline"
+                onClick={() => setState("Admin")}
+              >
+                Click here
+              </span>
+            </p>
+          )}
         </div>
       )}
     </div>

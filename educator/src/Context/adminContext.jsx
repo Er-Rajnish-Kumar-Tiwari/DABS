@@ -1,20 +1,26 @@
-import { createContext, useState } from "react";
+// src/Context/adminContext.jsx
+import { createContext, useEffect, useState } from "react";
 
-const AdminContext=createContext();
+const AdminContext = createContext();
 
-const AdminContextProvider=(props)=>{
+const AdminContextProvider = (props) => {
+  const [atoken, setAToken] = useState("");
 
-    const [atoken,setAToken]=useState("");
-    const backendUrl=import.meta.env.Backend_URL;
+  useEffect(() => {
+    const savedToken = localStorage.getItem("atoken");
+    if (savedToken) {
+      setAToken(savedToken);
+      console.log("Token restored from localStorage:", savedToken);
+    }
+  }, []);
 
-    const value={atoken,setAToken,backendUrl};
+  const value = { atoken, setAToken };
 
-    return(
-        <AdminContext.Provider value={value}>
-            {props.children}
-        </AdminContext.Provider>
-    );
-
+  return (
+    <AdminContext.Provider value={value}>
+      {props.children}
+    </AdminContext.Provider>
+  );
 };
 
-export  {AdminContextProvider,AdminContext};
+export { AdminContextProvider, AdminContext };
