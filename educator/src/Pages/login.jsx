@@ -5,14 +5,17 @@ import { AdminContext } from "../Context/adminContext";
 import axios from "axios";
 import { toast } from "react-toastify";
 
-const LoginPage = () => {
-  const [showLoginCard, setShowLoginCard] = useState(false);
+const LoginPage = ({
+  setShowLoginCard,
+  showLoginCard,
+  setIsLoggedIn,
+  isLoggedIn,
+}) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [state, setState] = useState("Admin");
 
   const { setAToken, atoken } = useContext(AdminContext);
-  const [isLoggedIn, setIsLoggedIn] = useState(() => !!localStorage.getItem("atoken"));
 
   useEffect(() => {
     if (atoken) {
@@ -31,41 +34,27 @@ const LoginPage = () => {
 
       if (response.data.Messege === "Admin Login Successfully") {
         setAToken(response.data.token);
-        localStorage.setItem("atoken", response.data.token); 
+        localStorage.setItem("atoken", response.data.token);
         setIsLoggedIn(true);
         setShowLoginCard(false);
         setEmail("");
         setPassword("");
         toast.success(response.data.Messege);
-      }
-       else if (response.data.Messege === "Wrong admin details") {
+      } else if (response.data.Messege === "Wrong admin details") {
         toast.error(response.data.Messege + " Try again!");
-      }
-       else {
+        setEmail("");
+        setPassword("");
+      } else {
         toast.warning("Something went wrong with the network!");
       }
-    } 
-    catch (error) {
+    } catch (error) {
       console.log("Login Error:", error);
       toast.error("Login failed. Please check your details or try again.");
     }
   };
 
-  const handleLogout = () => {
-    setIsLoggedIn(false);
-    setAToken("");
-    localStorage.removeItem("atoken"); 
-    toast.success("Logout Successfully!");
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-blue-100">
-      <Navbar
-        isLoggedIn={isLoggedIn}
-        onLoginClick={() => setShowLoginCard(true)}
-        onLogoutClick={handleLogout}
-      />
-
       {showLoginCard && !isLoggedIn && (
         <div className="max-w-sm mx-auto mt-10 bg-white rounded-lg shadow-lg p-6 relative">
           <button
