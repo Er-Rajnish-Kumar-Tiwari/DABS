@@ -1,5 +1,5 @@
 const validator=require("validator");
-const bcrypt=require("bcrypt");
+const bcrypt=require("bcryptjs");
 const { doctorModels } = require("../Models/doctorModel");
 const cloudinary=require("cloudinary").v2;
 const jwt=require("jsonwebtoken");
