@@ -27,6 +27,12 @@ const App = () => {
         onLogoutClick={handleLogout}
       />
       <LoginPage showLoginCard={showLoginCard} setShowLoginCard={setShowLoginCard} isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn}/>
+
+      <footer className="text-cente">
+        <hr className="h-0.5 bg-red-400"/>
+        <p className="text-sm text-center mb-3 mt-3">© 2025 Tanish All-in-One Health Care. All rights reserved.</p>
+        <hr className="h-0.5 bg-red-400"/>
+      </footer>
       <ToastContainer />
     </div>
   );
