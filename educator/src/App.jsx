@@ -41,7 +41,7 @@ const App = () => {
         {/* Routed Pages */}
         <div className="flex-1">
           <Routes>
-            <Route path="/" element={<Dashboard />} />
+            <Route path="/" element={<></>} />
             <Route path="/add-doctor" element={<AddDoctor />} />
             <Route path="/doctor-list" element={<DoctorList />} />
             <Route path="/dashboard" element={<Dashboard />} />
