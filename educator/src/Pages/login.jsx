@@ -4,6 +4,7 @@ import Navbar from "../Components/navbar";
 import { AdminContext } from "../Context/adminContext";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const LoginPage = ({
   setShowLoginCard,
@@ -14,6 +15,7 @@ const LoginPage = ({
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [state, setState] = useState("Admin");
+  const navigate=useNavigate();
 
   const { setAToken, atoken } = useContext(AdminContext);
 
@@ -39,6 +41,7 @@ const LoginPage = ({
         setShowLoginCard(false);
         setEmail("");
         setPassword("");
+        navigate("/dashboard");
         toast.success(response.data.Messege);
       } else if (response.data.Messege === "Wrong admin details") {
         toast.error(response.data.Messege + " Try again!");

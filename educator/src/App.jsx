@@ -5,13 +5,14 @@ import { toast, ToastContainer } from "react-toastify";
 import { AdminContext } from "./Context/adminContext";
 import Navbar from "./Components/navbar";
 import Sidebar from "./Components/sidebar";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import AddDoctor from "./Pages/Admin/addDoctor";
 import DoctorList from "./Pages/Admin/doctorList";
 import Dashboard from "./Pages/Admin/dashboard";
 import Appointment from "./Pages/Admin/appointment";
 
 const App = () => {
+  const navigate=useNavigate();
   const { setAToken, atoken } = useContext(AdminContext);
   const [isLoggedIn, setIsLoggedIn] = useState(
     () => !!localStorage.getItem("atoken")
@@ -23,6 +24,7 @@ const App = () => {
     setAToken("");
     localStorage.removeItem("atoken");
     toast.success("Logout Successfully!");
+    navigate("/");
   };
 
   return (
@@ -39,7 +41,7 @@ const App = () => {
         {atoken && <Sidebar/>}
 
         {/* Routed Pages */}
-        <div className="flex-1">
+        {atoken && (<div className="flex-1">
           <Routes>
             <Route path="/" element={<></>} />
             <Route path="/add-doctor" element={<AddDoctor />} />
@@ -47,7 +49,7 @@ const App = () => {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/appointment" element={<Appointment />} />
           </Routes>
-        </div>
+        </div>)}
       </div>
 
       {/* Login Popup */}

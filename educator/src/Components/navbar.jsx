@@ -2,14 +2,16 @@ import React, { useContext } from 'react';
 import Logo from '../Pages/logo.png';
 import { AdminContext } from '../Context/adminContext';
 import { MdLogout } from 'react-icons/md';
+import { useNavigate } from 'react-router-dom';
 
 
 const Navbar = ({ isLoggedIn, onLoginClick, onLogoutClick }) => {
   const {atoken}=useContext(AdminContext);
+  const navigate=useNavigate();
 
   return (
     <nav className="bg-cyan-200  py-3 flex justify-between items-center shadow px-5">
-      <img src={Logo} alt="Logo" className="w-24 lg:w-28 cursor-pointer" />
+      <img src={Logo} onClick={atoken ? ()=>navigate("/dashboard") : ()=>navigate("/") } alt="Logo" className="w-24 lg:w-28 cursor-pointer" />
       {!isLoggedIn ? (
         <button
           onClick={onLoginClick}
