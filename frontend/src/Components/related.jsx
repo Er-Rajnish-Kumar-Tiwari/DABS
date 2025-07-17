@@ -3,23 +3,23 @@ import { AppContext } from '../Context/appContext';
 import { useNavigate } from 'react-router-dom';
 
 const Related = ({ docId, speciality }) => {
-  const { doctors } = useContext(AppContext);
+  const { doctorList } = useContext(AppContext);
   const [relDoc, setRelDoc] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (doctors.length > 0 && speciality) {
-      const docData = doctors.filter(doc => doc.speciality === speciality && doc._id !== docId);
+    if (doctorList.length > 0 && speciality) {
+      const docData = doctorList.filter(doc => doc.speciality === speciality && doc._id !== docId);
       setRelDoc(docData);
     }
-  }, [speciality, docId, doctors]);
+  }, [speciality, docId, doctorList]);
 
   return (
     <div className='flex flex-col items-center gap-4 text-gray-800 px-4 sm:px-6 md:px-10 lg:px-16 mt-10 md:mt-20'>
 
-      <p className='text-2xl sm:text-3xl font-medium text-center'>Related Doctors</p>
+      <p className='text-2xl sm:text-3xl font-medium text-center'>Related doctorList</p>
       <p className='w-full sm:w-3/4 md:w-2/3 lg:w-1/2 text-center text-sm sm:text-base'>
-        Simply browse through our extensive list of trusted doctors.
+        Simply browse through our extensive list of trusted doctorList.
       </p>
 
       <div className='w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5 pt-5 px-2 sm:px-0'>

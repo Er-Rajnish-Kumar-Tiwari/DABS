@@ -1,14 +1,16 @@
 import { createContext, useEffect, useState } from "react";
-import { doctors, specialityData } from "../assets/assets";
+import { specialityData } from "../assets/assets";
 import axios from "axios";
 
 const AppContext = createContext();
-const [doctorList, setDoctorList] = useState([]);
 
 const AppContextProvider = (props) => {
+  const [doctorList, setDoctorList] = useState([]);
   const allDoctors = async () => {
     try {
-      const response = await axios.get("https://dabs-backend.onrender.com/doctorList");
+      const response = await axios.get(
+        "https://dabs-backend.onrender.com/doctorList"
+      );
 
       console.log("Response:", response);
 
@@ -20,7 +22,7 @@ const AppContextProvider = (props) => {
     } catch (error) {
       console.error("API Error:", error);
       toast.error(
-      error.response?.data?.Messege || "Something went wrong fetching doctors"
+        error.response?.data?.Messege || "Something went wrong fetching doctors"
       );
     }
   };
@@ -30,7 +32,9 @@ const AppContextProvider = (props) => {
   }, []);
 
   const value = {
-    doctors,
+    doctorList,
+    setDoctorList,
+    allDoctors,
     specialityData,
   };
 

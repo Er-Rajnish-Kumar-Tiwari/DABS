@@ -7,7 +7,7 @@ import Related from '../Components/related';
 const Appoimanet = () => {
   const navigate = useNavigate();
   const { docId } = useParams();
-  const { doctors } = useContext(AppContext);
+  const { doctorList } = useContext(AppContext);
   const [docInfo, setDocInfo] = useState(null);
   const [docSlot, setDocSlot] = useState([]);
   const [timeSlot, setTimeSlot] = useState('');
@@ -15,13 +15,13 @@ const Appoimanet = () => {
   const dayOfWeek = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
 
   const fetchInfo = () => {
-    const info = doctors.find(doc => doc._id === docId);
+    const info = doctorList.find(doc => doc._id === docId);
     setDocInfo(info);
   };
 
   useEffect(() => {
     fetchInfo();
-  }, [doctors, docId]);
+  }, [doctorList, docId]);
 
   const getAvailbleSlot = () => {
     setDocSlot([]);
@@ -108,7 +108,7 @@ const Appoimanet = () => {
 
             <p className='text-gray-500 font-medium mt-4'>
               Appointment fee:
-              <span className='text-gray-700'> Rs.{docInfo.fees * 30}</span>
+              <span className='text-gray-700'> Rs.{docInfo.fees}</span>
             </p>
           </div>
         </div>
@@ -159,7 +159,7 @@ const Appoimanet = () => {
           </button>
         </div>
 
-        {/* Related Doctors */}
+        {/* Related doctorList */}
         <Related docId={docId} speciality={docInfo.speciality} />
       </div>
     )

@@ -4,7 +4,7 @@ import { AppContext } from '../Context/appContext';
 
 const TopDocter = () => {
   const navigate = useNavigate();
-  const { doctors } = useContext(AppContext);
+  const { doctorList } = useContext(AppContext);
 
   return (
     <div className='flex flex-col items-center gap-4 text-gray-800 px-4 sm:px-6 md:px-10 lg:px-16'>
@@ -15,7 +15,7 @@ const TopDocter = () => {
       </p>
 
       <div className='w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5 pt-5 px-2 sm:px-0'>
-        {doctors.slice(0, 10).map((iteam, index) => {
+        {doctorList.slice(0, 10).map((iteam, index) => {
           return (
             <div
               onClick={() => {

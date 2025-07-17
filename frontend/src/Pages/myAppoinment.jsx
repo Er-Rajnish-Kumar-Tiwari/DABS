@@ -3,7 +3,7 @@ import { AppContext } from '../Context/appContext'
 
 const MyAppoinment = () => {
 
-  const { doctors } = useContext(AppContext);
+  const { doctorList } = useContext(AppContext);
 
   return (
     <div className='mt-10 md:ml-10'>
@@ -11,7 +11,7 @@ const MyAppoinment = () => {
       <p className='mb-5 text-2xl text-gray-500 font-semibold'>My appointments</p>
 
       <div>
-        {doctors.slice(0, 3).map((iteam, index) => {
+        {doctorList.slice(0, 3).map((iteam, index) => {
           return (
 
             <div className='flex flex-row  border border-y-gray-400' key={index}>
