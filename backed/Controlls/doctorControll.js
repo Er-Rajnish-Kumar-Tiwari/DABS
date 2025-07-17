@@ -103,11 +103,13 @@ const removeDoctor=async(req,res)=>{
 const allDoctor=async(req,res)=>{
 
     try {
-        
+        const alldoctors=await doctorModels.find().select("-password");
+        res.json({Status:"200",alldoctors});
     }
 
     catch (error) {
         res.json({Status:"400",Messege:"Some error",error:error});
+        console.log(error);
     }
 
 };

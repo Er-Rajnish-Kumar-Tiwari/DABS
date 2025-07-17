@@ -6,7 +6,7 @@ const doctorRoute=express.Router();
 
 doctorRoute.post("/addDoctor",authAdmin,upload.single("image"),addDoctor);
 doctorRoute.delete("/removeDoctor",authAdmin,removeDoctor);
-doctorRoute.get("/allDoctor",allDoctor);
+doctorRoute.post("/allDoctor",authAdmin,allDoctor);
 doctorRoute.post("/adminLogin",adminLogin);
 
 module.exports=doctorRoute;
