@@ -7,7 +7,7 @@ import { GiStomach } from 'react-icons/gi';
 import { BsPersonBoundingBox } from 'react-icons/bs';
 
 const Doctor = () => {
-  const { doctorList } = useContext(AppContext);
+  const { doctorList ,allDoctors} = useContext(AppContext);
   const { speciality } = useParams();
   const [specialityDoctor, setspecialityDoctor] = useState([]);
   const navigate = useNavigate();
@@ -23,6 +23,10 @@ const Doctor = () => {
   useEffect(() => {
     applyFilter();
   }, [doctorList, speciality]);
+
+    useEffect(() => {
+    allDoctors();
+  }, []);
 
   return (
     <div className="px-4 sm:px-6 md:px-10 lg:px-16">
