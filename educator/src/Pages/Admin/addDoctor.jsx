@@ -78,7 +78,7 @@ const submitHandler = async (e) => {
       className="px-4 sm:px-8 md:px-10 py-5 w-full"
       onSubmit={submitHandler}
     >
-      <p className="text-xl sm:text-2xl font-semibold text-blue-900 mb-4">
+      <p className="text-xl sm:text-2xl font-semibold text-blue-900 mb-4 text-start">
         Add Doctor
       </p>
 

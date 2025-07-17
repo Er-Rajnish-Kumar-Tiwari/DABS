@@ -3,6 +3,7 @@ const bcrypt=require("bcryptjs");
 const { doctorModels } = require("../Models/doctorModel");
 const cloudinary=require("cloudinary").v2;
 const jwt=require("jsonwebtoken");
+const { json } = require("body-parser");
 
 // Password checking functions
 const isVaild = (pass) => {
@@ -136,4 +137,18 @@ const adminLogin=async(req,res)=>{
 
 };
 
-module.exports={addDoctor,removeDoctor,allDoctor,adminLogin};
+
+const changeAvailablity = async (req, res) => {
+  try {
+    const { docId } = req.body;
+    const docData = await doctorModels.findById(docId);
+    await doctorModels.findByIdAndUpdate(docId, {
+      avaiable: !docData.avaiable,
+    });
+    res.json({ Status: "200", Messege: "Availability changed" });
+  } catch (error) {
+    res.json({ Status: "400", Messege: "Some error", error: error });
+  }
+};
+
+module.exports={addDoctor,removeDoctor,allDoctor,adminLogin,changeAvailablity};
