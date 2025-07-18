@@ -1,14 +1,22 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { assets } from '../assets/assets'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { FaHome, FaUserMd, FaInfoCircle, FaPhoneAlt } from 'react-icons/fa'
+import { AppContext } from '../Context/appContext'
+import { toast } from 'react-toastify'
 
 const Navbar = ({ setShowLogin }) => {
   const navigate = useNavigate()
-  const [token, setToken] = useState(true)
+  const {token, setToken} =useContext(AppContext);
 
   const sumbitBtn = () => {
     setShowLogin(true)
+  }
+
+  const logoutHandler=()=>{
+    setToken("");
+    localStorage.removeItem("token");
+    toast.success("Logout successfully!");
   }
 
   return (
@@ -82,7 +90,7 @@ const Navbar = ({ setShowLogin }) => {
                   <div className='min-w-48 bg-stone-100 rounded flex flex-col gap-4 p-4'>
                     <p className='cursor-pointer hover:text-black' onClick={() => navigate("/profile")}>My Profile</p>
                     <p className='cursor-pointer hover:text-black' onClick={() => navigate("/myAppoimanet")}>My Appointments</p>
-                    <p className='cursor-pointer hover:text-black' onClick={() => setToken(false)}>Logout</p>
+                    <p className='cursor-pointer hover:text-black' onClick={logoutHandler}>Logout</p>
                   </div>
                 </div>
               </div>

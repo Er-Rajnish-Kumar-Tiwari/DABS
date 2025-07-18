@@ -6,6 +6,15 @@ const AppContext = createContext();
 
 const AppContextProvider = (props) => {
   const [doctorList, setDoctorList] = useState([]);
+  const [token, setToken] = useState("");
+
+  useEffect(() => {
+    const savedToken = localStorage.getItem("token");
+    if (savedToken) {
+      setToken(savedToken);
+    }
+  }, []);
+
   const allDoctors = async () => {
     try {
       const response = await axios.get(
@@ -36,6 +45,8 @@ const AppContextProvider = (props) => {
     setDoctorList,
     allDoctors,
     specialityData,
+    token,
+    setToken,
   };
 
   return (

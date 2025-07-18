@@ -10,6 +10,8 @@ import Profile from './Pages/profile'
 import MyAppoinment from './Pages/myAppoinment'
 import Navbar from './Components/navbar'
 import Footer from './Components/footer'
+import "react-toastify/dist/ReactToastify.css";
+import {ToastContainer } from "react-toastify";
 
 const App = () => {
   const [ShowLogin, setShowLogin] = useState(false);
@@ -36,6 +38,7 @@ const App = () => {
 
         </Routes>
         <Footer/>
+        <ToastContainer/>
       </div>
 
     </>
