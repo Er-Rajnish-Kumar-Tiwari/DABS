@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const validator = require("validator");
 const { userModels } = require("../Models/userModel");
+const cloudinary=require("cloudinary").v2;
 
 const isVaild = (pass) => {
   const minLength = 8;
@@ -104,4 +105,63 @@ const getProfileData = async (req, res) => {
   }
 };
 
-module.exports = { createToken, registerUser, loginUser, getProfileData };
+
+const updataProfile = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const { name, dob, address, gender, phone } = req.body;
+    const imageFile = req.file;
+
+    // 1. Validate required fields
+    if (!name || !dob || !address || !phone || !gender) {
+      return res.status(400).json({
+        Status: "400",
+        Message: "Please fill all required fields.",
+      });
+    }
+
+    // 2. Prepare update object
+    const updateData = {
+      name,
+      dob,
+      gender,
+      phone,
+    };
+
+    // Parse address if it's a JSON string
+    try {
+      updateData.address = typeof address === "string" ? JSON.parse(address) : address;
+    } catch (err) {
+      return res.status(400).json({
+        Status: "400",
+        Message: "Invalid address format (must be JSON).",
+      });
+    }
+
+    // 3. Upload image if provided
+    if (imageFile) {
+      const uploadedImage = await cloudinary.uploader.upload(imageFile.path, {
+        resource_type: "image",
+        folder: "user_profiles", // optional: organize in folder
+      });
+      updateData.image = uploadedImage.secure_url;
+    }
+
+    // 4. Update user
+    await userModels.findByIdAndUpdate(userId, updateData, { new: true });
+
+    // 5. Send success response
+    res.status(200).json({
+      Status: "200",
+      Message: "Profile updated successfully.",
+    });
+  } catch (error) {
+    console.error("Update profile error:", error.message);
+    res.status(500).json({
+      Status: "500",
+      Message: "Something went wrong while updating profile.",
+      Error: error.message,
+    });
+  }
+};
+module.exports = { createToken, registerUser, loginUser, getProfileData , updataProfile};
