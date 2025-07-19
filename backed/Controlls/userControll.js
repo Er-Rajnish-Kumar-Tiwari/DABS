@@ -153,13 +153,13 @@ const updataProfile = async (req, res) => {
     // 5. Send success response
     res.status(200).json({
       Status: "200",
-      Message: "Profile updated successfully.",
+      Messege: "Profile updated successfully.",
     });
   } catch (error) {
     console.error("Update profile error:", error.message);
     res.status(500).json({
       Status: "500",
-      Message: "Something went wrong while updating profile.",
+      Messege: "Something went wrong while updating profile.",
       Error: error.message,
     });
   }
