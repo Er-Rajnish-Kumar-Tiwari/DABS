@@ -10,7 +10,8 @@ const isVaild = (pass) => {
   const hasLowerCase = /[a-z]/;
   const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/;
 
-  const isValid = validator.isLength(pass, { min: minLength }) &&
+  const isValid =
+    validator.isLength(pass, { min: minLength }) &&
     hasNumber.test(pass) &&
     hasUpperCase.test(pass) &&
     hasLowerCase.test(pass) &&
@@ -27,10 +28,9 @@ const registerUser = async (req, res) => {
   const { name, email, password } = req.body;
 
   try {
-
     const exits = await userModels.findOne({ email });
     if (exits) {
-      return res.json({ Status: "500", Messege: "User already exits", });
+      return res.json({ Status: "500", Messege: "User already exits" });
     }
 
     if (!validator.isEmail(email)) {
@@ -48,45 +48,60 @@ const registerUser = async (req, res) => {
     const newUser = new userModels({
       name: name,
       email: email,
-      password: hashPass
+      password: hashPass,
     });
 
     const user = await newUser.save();
     const token = createToken(user._id);
 
-    res.json({ Status: "200", Messege: "User register successfully", token: token });
-
+    res.json({
+      Status: "200",
+      Messege: "User register successfully",
+      token: token,
+    });
+  } catch (error) {
+    res.json({ Status: "400", Messege: "Some error", error: error });
   }
-  catch (error) {
-    res.json({ Status: "400", Messege: "Some error", error: error })
-  };
-
 };
 
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-
     const user = await userModels.findOne({ email });
     if (!user) {
-      return res.json({ Status: "500", Messege: "User not exits please register", });
+      return res.json({
+        Status: "500",
+        Messege: "User not exits please register",
+      });
     }
 
-    const match=await bcrypt.compare(password,user.password);
-    if(!match){
-      return res.json({Status:"500",Messege:"Invaild password please try agaib latter"});
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) {
+      return res.json({
+        Status: "500",
+        Messege: "Invaild password please try agaib latter",
+      });
     }
 
-    const token=createToken(user._id);
+    const token = createToken(user._id);
 
-    res.json({Status:"200",Messege:"Login successfully",token:token});
-
-  }
-  catch (error) {
+    res.json({ Status: "200", Messege: "Login successfully", token: token });
+  } catch (error) {
     res.json({ Status: "400", Messege: "Some error", error: error });
   }
-
 };
 
-module.exports = { createToken, registerUser, loginUser };
+const getProfileData = async (req, res) => {
+  try {
+    const  userId  = req.userId;
+
+    const userData = await userModels.findById(userId).select("-password");
+    res.json({ Status: "200", userData });
+  } catch (error) {
+    console.log(error.message);
+    res.json({ Status: "400", Messege: "Some error", error: error });
+  }
+};
+
+module.exports = { createToken, registerUser, loginUser, getProfileData };
