@@ -95,13 +95,22 @@ const loginUser = async (req, res) => {
 
 const getProfileData = async (req, res) => {
   try {
-    const  userId  = req.userId;
+    const userId = req.userId;
+
+    if (!userId) {
+      return res.status(400).json({ Status: "400", Messege: "User ID missing in request." });
+    }
 
     const userData = await userModels.findById(userId).select("-password");
-    res.json({ Status: "200", userData });
+
+    if (!userData) {
+      return res.status(404).json({ Status: "404", Messege: "User not found." });
+    }
+
+    res.status(200).json({ Status: "200", userData });
   } catch (error) {
-    console.log(error.message);
-    res.json({ Status: "400", Messege: "Some error", error: error });
+    console.error("Get Profile Error:", error.message);
+    res.status(500).json({ Status: "500", Messege: "Server error", Error: error.message });
   }
 };
 
