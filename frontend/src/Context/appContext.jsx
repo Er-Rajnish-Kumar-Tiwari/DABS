@@ -51,6 +51,7 @@ const getProfile = async () => {
       }
     );
 
+    console.log(res.data);
     if (res.status === 200) {
       setProfileData(res.data.userData);
     } else {
@@ -64,7 +65,7 @@ const getProfile = async () => {
 
 
 useEffect(() => {
-  if (token) {
+  if (token) {console.log("Token for profile fetch:", token);  
     getProfile();
   }
 }, [token]);
