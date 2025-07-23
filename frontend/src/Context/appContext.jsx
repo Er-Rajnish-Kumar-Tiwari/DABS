@@ -8,7 +8,7 @@ const AppContext = createContext();
 const AppContextProvider = (props) => {
   const [doctorList, setDoctorList] = useState([]);
   const [token, setToken] = useState("");
-  const [profileData, setProfileData] = useState(false);
+  const [profileData, setProfileData] = useState(null);
 
   useEffect(() => {
     const savedToken = localStorage.getItem("token");
@@ -40,36 +40,34 @@ const AppContextProvider = (props) => {
     allDoctors();
   }, []);
 
-  const getProfile = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const res = await axios.get(
-        "https://dabs-backend.onrender.com/getProfileData",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (res.data.Status === "200") {
-        setUser(res.data.userData);
-      } else {
-        toast.error("Unauthorized or session expired");
+const getProfile = async () => {
+  try {
+    const t=localStorage.getItem("token");
+    console.log(t);
+    const res = await axios.get(
+      "https://dabs-backend.onrender.com/getProfileData",
+      {
+        headers: {
+          Authorization: `Bearer ${t}`,
+        },
       }
-    } catch (error) {
-      toast.error("Error fetching profile data");
-      console.error("Profile Fetch Error:", error.message);
+    );
+
+    if (res.status === 200) {
+      setProfileData(res.data.userData);
+    } else {
+      toast.error("Unauthorized or session expired");
     }
-  };
+  } catch (error) {
+    toast.error("Error fetching profile data"+error.message);
+    console.log(localStorage.getItem("token"));
+  }
+};
+
 
   useEffect(() => {
-    if (token) {
       getProfile();
-    } else {
-      setProfileData(false);
-    }
-  }, [token]);
+  }, []);
 
   const value = {
     doctorList,

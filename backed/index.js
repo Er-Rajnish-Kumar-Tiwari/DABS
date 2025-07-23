@@ -12,7 +12,15 @@ require("dotenv").config();
 // this is called configration file  and middleware 
 const app=express();
 app.use(express.json());
-app.use(cors());
+
+app.use(cors({
+  origin: ["http://localhost:5173/", "https://doctor-booking-system-jdde.onrender.com/"], // update this
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true, // only if you're using cookies
+}));
+
+
 dbConnnection();
 cloudinaryConnection();
 app.use(userRouter);
