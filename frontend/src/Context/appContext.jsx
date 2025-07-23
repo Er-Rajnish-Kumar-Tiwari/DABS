@@ -42,13 +42,11 @@ const AppContextProvider = (props) => {
 
 const getProfile = async () => {
   try {
-    const t=localStorage.getItem("token");
-    console.log(t);
     const res = await axios.get(
       "https://dabs-backend.onrender.com/getProfileData",
       {
         headers: {
-          Authorization: `Bearer ${t}`,
+          Authorization: `Bearer ${token}`,
         },
       }
     );
@@ -59,15 +57,17 @@ const getProfile = async () => {
       toast.error("Unauthorized or session expired");
     }
   } catch (error) {
+    console.log(error.message);
     toast.error("Error fetching profile data"+error.message);
-    console.log(localStorage.getItem("token"));
   }
 };
 
 
-  useEffect(() => {
-      getProfile();
-  }, []);
+useEffect(() => {
+  if (token) {
+    getProfile();
+  }
+}, [token]);
 
   const value = {
     doctorList,
