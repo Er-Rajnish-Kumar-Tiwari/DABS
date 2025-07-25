@@ -7,7 +7,7 @@ import { toast } from 'react-toastify'
 
 const Navbar = ({ setShowLogin }) => {
   const navigate = useNavigate()
-  const {token, setToken} =useContext(AppContext);
+  const {token, setToken,profileData} =useContext(AppContext);
 
   const sumbitBtn = () => {
     setShowLogin(true)
@@ -84,7 +84,7 @@ const Navbar = ({ setShowLogin }) => {
           {
             token ? (
               <div className='flex items-center gap-2 group relative cursor-pointer mt-5'>
-                <img src={assets.profile_pic} alt="" className='w-8 rounded-full' />
+                { profileData && <img src={profileData.image} alt="" className='w-8 rounded-full' /> }
                 <img src={assets.dropdown_icon} alt="" className='w-2.5' />
                 <div className='absolute top-0 right-0 pt-14 text-base font-medium z-20 text-gray-600 hidden group-hover:block'>
                   <div className='min-w-48 bg-stone-100 rounded flex flex-col gap-4 p-4'>

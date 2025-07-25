@@ -1,35 +1,22 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { assets } from '../assets/assets';
+import { AppContext } from '../Context/appContext';
 
 const Profile = () => {
 
-  const [userData, setUserData] = useState({
-
-    "Name": "Rajnish Kumar Tiwari",
-    "Email": "tanish281202@gmail.com",
-    "Phone": "+91-95729-73654",
-    "Image": assets.profile_pic,
-
-    "Address": {
-      "line1": "Maricha Saran"
-    },
-
-    "Gender": "Male",
-    "Birthday": "20-05-2006"
-
-  });
-
   const [isEdit, setIsEdit] = useState(false);
+  const {profileData,setProfileData}=useContext(AppContext);
+  console.log(profileData);
 
 
-  return (
+  return profileData &&(
 
     <div className='flex flex-col gap-3 max-w-lg text-sm m-10'>
 
-      <img src={userData.Image} alt="" className='w-36 rounded'/>
+      <img src={profileData.image} alt="" className='w-36 rounded'/>
 
       {
-        isEdit ? <input type='text' value={userData.Name} onChange={e => setUserData(pre => ({ ...pre, Name: e.target.value }))} className='bg-gray-300 text-3xl font-medium max-w-80 mt-2 p-1 rounded'/> : <p className='text-3xl font-medium text-gray-900 mt-2'>{userData.Name}</p>
+        isEdit ? <input type='text' value={profileData.name} onChange={e => setProfileData(pre => ({ ...pre, name: e.target.value }))} className='bg-gray-300 text-3xl font-medium max-w-80 mt-2 p-1 rounded'/> : <p className='text-3xl font-medium text-gray-900 mt-2'>{profileData.name}</p>
       }
       <hr className='h-[1px] bg-zinc-800 border-none' />
 
@@ -39,18 +26,18 @@ const Profile = () => {
         <div className='grid grid-cols-[1fr_3fr] gap-y-2.5 mt-3 text-neutral-900'>
 
           <p className='font-medium'>Email : </p>
-          <p className='text-blue-500'>{userData.Email}</p>
+          <p className='text-blue-500'>{profileData.email}</p>
 
           <p className='font-medium'>Phone : </p>
-          {isEdit ? <input type="text" value={userData.Phone} onChange={e => setUserData(pre => ({ ...pre, Phone: e.target.value }))} className='bg-gray-300 max-w-52 p-1 rounded'/> : <p className='text-blue-500'>{userData.Phone}</p>}
+          {isEdit ? <input type="text" value={profileData.phone} onChange={e => setProfileData(pre => ({ ...pre, phone: e.target.value }))} className='bg-gray-300 max-w-52 p-1 rounded'/> : <p className='text-blue-500'>{profileData.phone}</p>}
 
           <p className='font-medium'>Address : </p>
           {isEdit
             ? <p>
-              <input type="text" value={userData.Address.line1} onChange={e => setUserData(pre => ({ ...pre, Address: { ...pre.Address, line1: e.target.value } }))} className='bg-gray-300 max-w-52 p-1 rounded'/>
+              <input type="text" value={profileData.address.line1} onChange={e => setProfileData(pre => ({ ...pre, address: { ...pre.address, line1: e.target.value } }))} className='bg-gray-300 max-w-52 p-1 rounded'/>
             </p> :
             <p>
-              {userData.Address.line1}
+              {profileData.address.line1}
             </p>
           }
 
@@ -64,14 +51,14 @@ const Profile = () => {
         <div className='grid grid-cols-[1fr_3fr] gap-y-2.5 mt-3 text-neutral-900'>
           
           <p className='font-medium'>Gender : </p>
-          {isEdit ? <select value={userData.Gender} onChange={e => setUserData(pre => ({ ...pre, Gender: e.target.value }))}  className='bg-gray-300 max-w-52 p-1 rounded'>
+          {isEdit ? <select value={profileData.gender} onChange={e => setProfileData(pre => ({ ...pre, gender: e.target.value }))}  className='bg-gray-300 max-w-52 p-1 rounded'>
             <option value="Male"> Male </option>
             <option className='Female'>Female</option>
           </select> :
-            <p>{userData.Gender}</p>}
+            <p>{profileData.gender}</p>}
 
           <p className='font-medium'>Birthday : </p>
-          {isEdit ? <input type="date" value={userData.Birthday} onChange={e => setUserData(pre => ({ ...pre, Birthday: e.target.value }))}  className='bg-gray-300 max-w-52 p-1 rounded'/> : <p>{userData.Birthday}</p>}
+          {isEdit ? <input type="date" value={profileData.dob} onChange={e => setProfileData(pre => ({ ...pre, dob: e.target.value }))}  className='bg-gray-300 max-w-52 p-1 rounded'/> : <p>{profileData.dob}</p>}
 
         </div>
 
