@@ -6,12 +6,12 @@ import Appoimanet from './Pages/appoimanet'
 import About from './Pages/about'
 import Contact from './Pages/contact'
 import Sign from './Pages/sign'
-import Profile from './Pages/profile'
 import MyAppoinment from './Pages/myAppoinment'
 import Navbar from './Components/navbar'
 import Footer from './Components/footer'
 import "react-toastify/dist/ReactToastify.css";
 import {ToastContainer } from "react-toastify";
+import Profile from './Pages/profile'
 
 const App = () => {
   const [ShowLogin, setShowLogin] = useState(false);
@@ -33,8 +33,8 @@ const App = () => {
           <Route path='/about' element={<About />} />
           <Route path='/contact' element={<Contact />} />
           <Route path='/sign' element={<Sign />} />
-          <Route path='/profile' element={<Profile />} />
           <Route path='/myAppoimanet' element={<MyAppoinment />} />
+          <Route path='/profile' element={<Profile />} />
 
         </Routes>
         <Footer/>
