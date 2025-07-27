@@ -87,7 +87,20 @@ const Appoimanet = ({setShowLogin}) => {
       const slotDate=day +"_"+ month +"_"+ year;
       
       const response=await axios.post("https://dabs-backend.onrender.com/appointmentBook",{docId,slotDate,slotTime:timeSlot},{headers:{Authorization: `Bearer ${token}`}});
-      console.log(response);
+      
+      if (response.data.Message === "Appoinment Booked") {
+        toast.success("Appointment Booked!");
+        navigate("/myAppoimanet");
+}
+      else if(response.data.Messege=="Slot not avaiable"){
+        toast.warning("Slot not avaiable!");
+      }
+      else if(response.data.Messege=="Doctor not avaiable"){
+        toast.warning("Doctor not avaiable!");
+      }
+      else{
+        toast.warning(response.data.Messege);
+      }
       
     } catch (error) {
       console.log(error.message);
