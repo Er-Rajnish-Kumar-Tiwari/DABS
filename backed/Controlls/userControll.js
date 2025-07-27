@@ -274,7 +274,7 @@ const canelAppointment = async (req, res) => {
       return res.json({ Status: "400", Messege: "Already cancelled" });
     }
 
-    await appointModels.findByIdAndUpdate(appointmentId, { cancelled: true });
+    await appointModels.findByIdAndUpdate(appointmentId, { cancellled: true });
 
     const { docId, slotDate, slotTime } = appointmentData;
     const doctorData = await doctorModels.findById(docId);
