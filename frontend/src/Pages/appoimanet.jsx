@@ -59,7 +59,7 @@ const Appoimanet = ({ setShowLogin }) => {
         const month = currentData.getMonth() + 1;
         const year = currentData.getFullYear();
 
-        const slotDate = day + "_" + month + "_" + year;
+        const slotDate = day + "/" + month + "/" + year;
         const slotTime = formattedTime;
 
         const isSlotAvaiable =
@@ -96,7 +96,7 @@ const Appoimanet = ({ setShowLogin }) => {
       const month = date.getMonth() + 1;
       const year = date.getFullYear();
 
-      const slotDate = day + "_" + month + "_" + year;
+      const slotDate = day + "/" + month + "/" + year;
 
       const response = await axios.post(
         "https://dabs-backend.onrender.com/appointmentBook",

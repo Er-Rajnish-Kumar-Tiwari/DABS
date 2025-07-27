@@ -4,11 +4,12 @@ import axios from 'axios';
 
 const MyAppoinment = () => {
 
-  const { doctorList,token } = useContext(AppContext);
+  const { token } = useContext(AppContext);
   const [appointments,setAppointments]=useState([]);
 
   const allApointments=async()=>{
     const response=await axios.get("https://dabs-backend.onrender.com/listAppointments",{headers:{Authorization: `Bearer ${token}`}});
+    console.log(response.data);
     if(response.data){
       setAppointments(response.data.appointments.reverse());
     }
@@ -41,7 +42,7 @@ const MyAppoinment = () => {
                   <p className='text-gray-600'>{iteam.docData.speciality}</p>
                   <p className='text-gray-600 font-semibold mt-2'>Address : </p>
                   <p className='text-gray-600'>{iteam.docData.address.line1}</p>
-                  <p className='text-gray-600 font-semibold mt-2'>Date & Time : <p className='text-gray-600 font-normal'> 25, July, 2024 |  8:30 PM</p> </p>
+                  <p className='text-gray-600 font-semibold mt-2'>Date & Time : <p className='text-gray-600 font-normal'> {iteam.slotDate} |  {iteam.slotTime}</p> </p>
 
                 </div>
 
