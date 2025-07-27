@@ -179,7 +179,8 @@ const updataProfile = async (req, res) => {
 const bookAppointments=async(req,res)=>{
 
   try {
-    const {userId,docId,slotDate,slotTime}=req.body;
+    const {docId,slotDate,slotTime}=req.body;
+    const userId = req.userId;
 
     const docData=await doctorModels.findById(docId).select("-password");
 
@@ -209,7 +210,6 @@ const bookAppointments=async(req,res)=>{
     delete docData.book_slot;
 
     const appointmentData={
-      userId,
       docId,
       userData,
       docData,

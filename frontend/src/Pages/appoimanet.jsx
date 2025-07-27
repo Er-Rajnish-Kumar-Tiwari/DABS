@@ -3,11 +3,13 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { AppContext } from '../Context/appContext';
 import { assets } from '../assets/assets';
 import Related from '../Components/related';
+import { toast } from 'react-toastify';
+import axios from 'axios';
 
-const Appoimanet = () => {
+const Appoimanet = ({setShowLogin}) => {
   const navigate = useNavigate();
   const { docId } = useParams();
-  const { doctorList } = useContext(AppContext);
+  const { doctorList ,token} = useContext(AppContext);
   const [docInfo, setDocInfo] = useState(null);
   const [docSlot, setDocSlot] = useState([]);
   const [timeSlot, setTimeSlot] = useState('');
@@ -65,7 +67,34 @@ const Appoimanet = () => {
 
   useEffect(() => {
     if (docInfo) getAvailbleSlot();
+    console.log(docSlot);
   }, [docInfo]);
+
+  const bookAppointment=async()=>{
+
+    if(!token){
+      toast.warning("Login to book appointments!");
+      setShowLogin(true);
+    }
+
+    try {
+      const date=docSlot[indexSlot][0].dateTime;
+      
+      const day=date.getDate();
+      const month=date.getMonth()+1;
+      const year=date.getFullYear();
+
+      const slotDate=day +"_"+ month +"_"+ year;
+      
+      const response=await axios.post("https://dabs-backend.onrender.com/appointmentBook",{docId,slotDate,slotTime:timeSlot},{headers:{Authorization: `Bearer ${token}`}});
+      console.log(response);
+      
+    } catch (error) {
+      console.log(error.message);
+      toast.error(error.message);
+    }
+
+  }
 
   return (
     docInfo && (
@@ -154,7 +183,7 @@ const Appoimanet = () => {
               ))}
           </div>
 
-          <button className='bg-blue-500 px-6 py-2.5 text-white mt-8 rounded-full font-semibold hover:bg-blue-600 transition-all'>
+          <button className='bg-blue-500 px-6 py-2.5 text-white mt-8 rounded-full font-semibold hover:bg-blue-600 transition-all' onClick={bookAppointment}>
             Book An Appointment
           </button>
         </div>
