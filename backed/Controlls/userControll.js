@@ -234,4 +234,20 @@ const bookAppointments=async(req,res)=>{
   }
 
 };
-module.exports = { createToken, registerUser, loginUser, getProfileData , updataProfile,bookAppointments};
+
+
+const getAppointments=async(req,res)=>{
+
+  try {
+    const userId=req.userId;
+    const appointments=await appointModels.find({userId});
+    res.json({Status:"200",appointments});
+  }
+  catch (error) {
+    console.log(error.message);
+    res.json({Status:"404",Messege:error.message});
+  }
+
+};
+
+module.exports = { createToken, registerUser, loginUser, getProfileData , updataProfile,bookAppointments ,getAppointments};
