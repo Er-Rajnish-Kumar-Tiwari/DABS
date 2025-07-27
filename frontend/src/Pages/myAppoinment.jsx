@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { AppContext } from '../Context/appContext'
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 const MyAppoinment = () => {
 
@@ -9,10 +10,24 @@ const MyAppoinment = () => {
 
   const allApointments=async()=>{
     const response=await axios.get("https://dabs-backend.onrender.com/listAppointments",{headers:{Authorization: `Bearer ${token}`}});
-    console.log(response.data);
     if(response.data){
       setAppointments(response.data.appointments.reverse());
     }
+  };
+
+  const cancelAppointment=async(appointmentId)=>{
+
+    try {
+      const response=await axios.post("https://dabs-backend.onrender.com/canelAppointment",{appointmentId},{headers:{Authorization: `Bearer ${token}`}});
+      toast.success(response.data.Messege);
+      allApointments();
+      console.log(response.data);
+    } 
+    catch (error) {
+      console.log(error.message);
+      toast.error(error.message);  
+    }
+
   };
 
   useEffect(()=>{
@@ -48,8 +63,8 @@ const MyAppoinment = () => {
 
                 <div className='flex flex-col gap-3 mb-3 mr-3 justify-end'>
 
-                  <button className='px-4 py-2 border  border-gray-300 rounded-md bg-blue-300 outline-none hover:bg-indigo-400 hover:scale-110 transition-all'>Pay Here</button>
-                  <button className='px-8 py-2 border  border-gray-300 rounded-md outline-none bg-red-200 hover:bg-red-400 hover:scale-110 transition-all'>Cancel</button>
+                  { !iteam.cancelled && <button className='px-4 py-2 border  border-gray-300 rounded-md bg-blue-300 outline-none hover:bg-indigo-400 hover:scale-110 transition-all'>Pay Here</button>}
+                  { !iteam.cancelled && <button className='px-8 py-2 border  border-gray-300 rounded-md outline-none bg-red-200 hover:bg-red-400 hover:scale-110 transition-all' onClick={()=>cancelAppointment(iteam._id)}>Cancel</button>}
                 </div>
 
               </div>

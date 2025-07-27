@@ -251,34 +251,48 @@ const getAppointments=async(req,res)=>{
 };
 
 
-const canelAppointment=async(req,res)=>{
-
+const canelAppointment = async (req, res) => {
   try {
-    const userId=req.userId;
-    const {appointmentId}=req.body;
-    const appointmentData=await appointModels.findById(appointmentId);
+    const userId = req.userId;
+    const { appointmentId } = req.body;
 
-    if(appointmentData.userId!==userId){
-      return res.json({Status:"500",Messege:"Unauthorized action"});
+    if (!appointmentId) {
+      return res.json({ Status: "400", Messege: "appointmentId is required" });
     }
 
-    await appointModels.findByIdAndUpdate(appointmentId,{cancelled:true});
+    const appointmentData = await appointModels.findById(appointmentId);
 
-    const {docId,slotDate,slotTime}=appointmentData;
+    if (!appointmentData) {
+      return res.json({ Status: "404", Messege: "Appointment not found" });
+    }
 
-    const doctorData=await doctorModels.findById(docId);
-    let book_slot=doctorData.book_slot;
+    if (appointmentData.userId.toString() !== userId) {
+      return res.json({ Status: "403", Messege: "Unauthorized action" });
+    }
 
-    book_slot[slotDate]=book_slot[slotDate].filter(e=>e!==slotTime);
-    await doctorModels.findByIdAndUpdate(docId,{book_slot});
+    if (appointmentData.cancelled === true) {
+      return res.json({ Status: "400", Messege: "Already cancelled" });
+    }
 
-    res.json({Status:"200",Messege:"Appointment Cancelled"});
-  } 
-  catch (error) {
+    await appointModels.findByIdAndUpdate(appointmentId, { cancelled: true });
+
+    const { docId, slotDate, slotTime } = appointmentData;
+    const doctorData = await doctorModels.findById(docId);
+
+    let book_slot = doctorData.book_slot;
+    if (book_slot[slotDate]) {
+      book_slot[slotDate] = book_slot[slotDate].filter(e => e !== slotTime);
+    }
+
+    await doctorModels.findByIdAndUpdate(docId, { book_slot });
+
+    res.json({ Status: "200", Messege: "Appointment Cancelled" });
+
+  } catch (error) {
     console.log(error.message);
-    res.json({Status:"404",Messege:error.message});
+    res.json({ Status: "500", Messege: "Internal Server Error", Error: error.message });
   }
-
 };
+
 
 module.exports = { createToken, registerUser, loginUser, getProfileData , updataProfile,bookAppointments ,getAppointments,canelAppointment};
