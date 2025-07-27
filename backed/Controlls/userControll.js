@@ -210,6 +210,7 @@ const bookAppointments=async(req,res)=>{
     delete docData.book_slot;
 
     const appointmentData={
+      userId,
       docId,
       userData,
       docData,
@@ -222,7 +223,7 @@ const bookAppointments=async(req,res)=>{
     const newAppointments=new appointModels(appointmentData);
     await newAppointments.save();
 
-    await doctorModels.findByIdAndUpdate(docId,{slots_booked});
+    await doctorModels.findByIdAndUpdate(docId,{book_slot: slots_booked});
 
     res.json({Status:"200", Message:"Appoinment Booked"});
     
