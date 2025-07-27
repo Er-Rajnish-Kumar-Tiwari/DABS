@@ -2,6 +2,8 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const validator = require("validator");
 const { userModels } = require("../Models/userModel");
+const { doctorModels } = require("../Models/doctorModel");
+const { appointModels } = require("../Models/appointmentModel");
 const cloudinary=require("cloudinary").v2;
 
 const isVaild = (pass) => {
@@ -173,4 +175,62 @@ const updataProfile = async (req, res) => {
     });
   }
 };
-module.exports = { createToken, registerUser, loginUser, getProfileData , updataProfile};
+
+const bookAppointments=async(req,res)=>{
+
+  try {
+    const {userId,docId,slotDate,slotTime}=req.body;
+
+    const docData=await doctorModels.findById(docId).select("-password");
+
+    if(!docData.avaiable){
+      res.json({Status:"500",Messege:"Doctor not avaiable"});
+    }
+
+    let slots_booked=docData.book_slot;
+    
+    // checking slot avaiable or not
+    if(slots_booked[slotDate]){
+
+      if(slots_booked[slotDate].includes(slotTime)){
+        return res.json({Status:"500",Messege:"Slot not avaiable"});
+      }
+      else {
+        slots_booked[slotDate].push(slotTime);
+      }
+
+    }
+    else {
+      slots_booked[slotDate]=[];
+      slots_booked[slotDate].push(slotTime);
+    }
+
+    const userData=await userModels.findById(userId).select("-password");
+    delete docData.book_slot;
+
+    const appointmentData={
+      userId,
+      docId,
+      userData,
+      docData,
+      slotDate,
+      slotTime,
+      amount:docData.fees,
+      date:Date.now()
+    };
+
+    const newAppointments=new appointModels(appointmentData);
+    await newAppointments.save();
+
+    await doctorModels.findByIdAndUpdate(docId,{slots_booked});
+
+    res.json({Status:"200", Message:"Appoinment Booked"});
+    
+  }
+  catch (error) {
+    console.log(error.message);
+    res.json({Status:"404",Messege:error.message});  
+  }
+
+};
+module.exports = { createToken, registerUser, loginUser, getProfileData , updataProfile,bookAppointments};
