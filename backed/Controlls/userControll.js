@@ -250,4 +250,35 @@ const getAppointments=async(req,res)=>{
 
 };
 
-module.exports = { createToken, registerUser, loginUser, getProfileData , updataProfile,bookAppointments ,getAppointments};
+
+const canelAppointment=async(req,res)=>{
+
+  try {
+    const userId=req.userId;
+    const {appointmentId}=req.body;
+    const appointmentData=await appointModels.findById(appointmentId);
+
+    if(appointmentData.userId!==userId){
+      return res.json({Status:"500",Messege:"Unauthorized action"});
+    }
+
+    await appointModels.findByIdAndUpdate(appointmentId,{cancelled:true});
+
+    const {docId,slotDate,slotTime}=appointmentData;
+
+    const doctorData=await doctorModels.findById(docId);
+    let book_slot=doctorData.book_slot;
+
+    book_slot[slotDate]=book_slot[slotDate].filter(e=>e!==slotTime);
+    await doctorModels.findByIdAndUpdate(docId,{book_slot});
+
+    res.json({Status:"200",Messege:"Appointment Cancelled"});
+  } 
+  catch (error) {
+    console.log(error.message);
+    res.json({Status:"404",Messege:error.message});
+  }
+
+};
+
+module.exports = { createToken, registerUser, loginUser, getProfileData , updataProfile,bookAppointments ,getAppointments,canelAppointment};
