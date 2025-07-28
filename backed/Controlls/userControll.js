@@ -6,7 +6,6 @@ const { doctorModels } = require("../Models/doctorModel");
 const { appointModels } = require("../Models/appointmentModel");
 const cloudinary = require("cloudinary").v2;
 const razorpay = require("razorpay");
-const crypto=require("crypto");
 
 const isVaild = (pass) => {
   const minLength = 8;
@@ -329,28 +328,18 @@ const paymentRazorpay = async (req, res) => {
 
 const verifyPayment = async (req, res) => {
   try {
-    const { razorpay_payment_id, razorpay_order_id, razorpay_signature } =
-      req.body;
+    const {razorpay_order_id}=req.body;
+    const orderInfo=await razorpayInstance.order.fetch(razorpay_order_id);
 
-    const sha = crypto.createHmac("sha256", process.env.RAZOR_PASS);
-
-    sha.update(`${razorpay_order_id}|${razorpay_payment_id}`);
-    const digest = sha.digest("hex");
-
-    if (digest !== razorpay_signature) {
-      res.json({
-        Status: "404",
-        Massage: "Some error",
-      });
+    if(orderInfo.status==='paid'){
+      await appointModels.findByIdAndUpdate(orderInfo.receipt,{payment:ture});
+      res.json({Status:"200",Messege:"Payment Successfull"});
     }
-
-    res.json({
-      Status: "200",
-      Massage: "Payment Successfull",
-      paymentId: razorpay_payment_id,
-      orderId: razorpay_order_id,
-    });
-  } catch (error) {
+    else{
+      res.json({Status:"500",Messege:"Payment Failed"});
+    }
+  } 
+  catch (error) {
     console.log(error.message);
     res.json({
       Status: "500",
