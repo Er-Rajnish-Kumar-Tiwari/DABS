@@ -309,14 +309,46 @@ const paymentRazorpay = async (req, res) => {
     }
 
     const options = {
-      amount: appointmentData.amount,
+      amount: appointmentData.amount * 100,
       currency: "INR",
       receipt: appointmentId,
     };
 
     const order = await razorpayInstance.orders.create(options);
     res.json({ Status: "200", order });
+  } catch (error) {
+    console.log(error.message);
+    res.json({
+      Status: "500",
+      Messege: "Internal Server Error",
+      Error: error.message,
+    });
+  }
+};
 
+const verifyPayment = async (req, res) => {
+  try {
+    const { razorpay_payment_id, razorpay_order_id, razorpay_signature } =
+      req.body;
+
+    const sha = crypto.createHmac("sha256", process.env.RAZOR_PASS);
+
+    sha.update(`${razorpay_order_id}|${razorpay_payment_id}`);
+    const digest = sha.digest("hex");
+
+    if (digest !== razorpay_signature) {
+      res.json({
+        Status: "404",
+        Massage: "Some error",
+      });
+    }
+
+    res.json({
+      Status: "200",
+      Massage: "Payment Successfull",
+      paymentId: razorpay_payment_id,
+      orderId: razorpay_order_id,
+    });
   } catch (error) {
     console.log(error.message);
     res.json({
@@ -336,5 +368,6 @@ module.exports = {
   bookAppointments,
   getAppointments,
   canelAppointment,
-  paymentRazorpay
+  paymentRazorpay,
+  verifyPayment,
 };

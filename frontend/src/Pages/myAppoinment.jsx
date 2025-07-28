@@ -30,6 +30,66 @@ const MyAppoinment = () => {
 
   };
 
+  const initPay=(order)=>{
+
+    const options={
+        key: import.meta.env.VITE_RAZORPAY_KEY,
+        amount: order.amount,
+        currency: order.currency || "INR",
+        name: "Tanish All In One Health Care",
+        description: "Book Appointment",
+        order_id: order.id,
+        receipt:order.receipt,
+        handler: async (response)=>{
+          try {
+            const validationResponse = await axios.post(
+              "https://dabs-backend.onrender.com/validate",
+              {
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_signature: response.razorpay_signature,
+                purchaseId,
+              },
+              {
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${token}`
+                },
+              }
+            );
+  
+            if (validationResponse.data.Status === "200") {
+              toast.success("Payment successful!");
+            } else {
+              toast.error("Payment validation failed.");
+            }
+          } catch (error) {
+          }
+        }
+      }
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+      toast.success("Payment successful!");
+      console.log(options);
+  };
+
+  const paymentRazorpay=async(appointmentId)=>{
+
+    try {
+      const response=await axios.post("https://dabs-backend.onrender.com/payment",{appointmentId},{headers:{Authorization: `Bearer ${token}`}});
+      
+      if(response.data){
+        initPay(response.data.order);
+      }
+    } 
+    catch (error) {
+      console.log(error.message);
+      toast.error(error.message);  
+    }
+
+  };
+
   useEffect(()=>{
     if(token){
       allApointments();
@@ -63,7 +123,7 @@ const MyAppoinment = () => {
 
                 <div className='flex flex-col gap-3 mb-3 mr-3 justify-end'>
 
-                  { !iteam.cancellled && <button className='px-4 py-2 border  border-gray-300 rounded-md bg-blue-300 outline-none hover:bg-indigo-400 hover:scale-110 transition-all'>Pay Here</button>}
+                  { !iteam.cancellled && <button className='px-4 py-2 border  border-gray-300 rounded-md bg-blue-300 outline-none hover:bg-indigo-400 hover:scale-110 transition-all' onClick={()=>paymentRazorpay(iteam._id)}>Pay Here</button>}
                   { !iteam.cancellled && <button className='px-8 py-2 border  border-gray-300 rounded-md outline-none bg-red-200 hover:bg-red-400 hover:scale-110 transition-all' onClick={()=>cancelAppointment(iteam._id)}>Cancel</button>}
                   {iteam.cancellled && <button className='px-8 py-2 border-red-700 bg-red-700 text-white rounded'>Cancelled</button>}
                 </div>
