@@ -10,6 +10,6 @@ doctorRoute.post("/allDoctor",authAdmin,allDoctor);
 doctorRoute.post("/availablity",authAdmin,changeAvailablity);
 doctorRoute.get("/doctorList",allDoctor);
 doctorRoute.post("/adminLogin",adminLogin);
-doctorRoute.post("/allAppointments",authAdmin,allAppointments);
+doctorRoute.get("/allAppointments",authAdmin,allAppointments);
 
 module.exports=doctorRoute;
