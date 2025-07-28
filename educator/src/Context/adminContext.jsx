@@ -8,6 +8,7 @@ const AdminContext = createContext();
 const AdminContextProvider = (props) => {
   const [atoken, setAToken] = useState("");
   const [doctorList, setDoctorList] = useState([]);
+  const [appointments,setAppointments]=useState({});
 
   useEffect(() => {
     const savedToken = localStorage.getItem("atoken");
@@ -27,8 +28,6 @@ const AdminContextProvider = (props) => {
           },
         }
       );
-
-      console.log("Response:", response);
 
       if (response.data.Status === "200") {
         setDoctorList(response.data.alldoctors);
@@ -68,7 +67,29 @@ const AdminContextProvider = (props) => {
 
   };
 
-  const value = { atoken, setAToken, doctorList, setDoctorList, allDoctors ,changeAvailablity};
+const getAppointments = async () => {
+  try {
+    const response = await axios.get("https://dabs-backend.onrender.com/allAppointments", {
+      headers: { atoken },
+    });
+
+    const allAppointments = response.data.appointments;
+
+    // Filter only paid and not cancelled appointments
+    const filtered = allAppointments.filter(
+      (a) => a.payment === true && a.cancellled !== true
+    );
+
+    setAppointments(filtered);
+  } catch (error) {
+    toast.error(
+      error.response?.data?.Messege || "Something went wrong fetching Appointments"
+    );
+  }
+};
+
+
+  const value = { atoken, setAToken, doctorList, setDoctorList, allDoctors ,changeAvailablity,getAppointments,appointments};
 
   return (
     <AdminContext.Provider value={value}>

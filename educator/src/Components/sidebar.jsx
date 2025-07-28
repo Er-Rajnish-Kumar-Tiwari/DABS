@@ -11,8 +11,8 @@ const Sidebar = () => {
 
   return (
     <>
-      {/* Desktop / Tablet Sidebar */}
-      <div className="hidden sm:flex flex-col h-screen lg:w-1/6 md:w-1/4 sm:w-1/2 border-r border-indigo-500 bg-indigo-100">
+      {/* Desktop Sidebar (Only visible on lg and above) */}
+      <div className="hidden lg:flex flex-col h-screen w-1/5 border-r border-indigo-500 bg-indigo-100">
         <ul className="flex flex-col">
           <SidebarItem to="/dashboard" icon={<MdHome />} label="Dashboard" />
           <SidebarItem to="/appointment" icon={<FaCalendarCheck />} label="Appointments" />
@@ -21,8 +21,8 @@ const Sidebar = () => {
         </ul>
       </div>
 
-      {/*  Mobile Bottom Navigation */}
-      <div className="sm:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-300 flex justify-around py-2 z-50 shadow-md">
+      {/* Bottom Navigation (Only visible on mobile and tablet) */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-300 flex justify-around py-2 z-50 shadow-md">
         <MobileNavItem to="/dashboard" icon={<MdHome size={22} />} />
         <MobileNavItem to="/appointment" icon={<FaCalendarCheck size={22} />} />
         <MobileNavItem to="/add-doctor" icon={<MdPersonAdd size={22} />} />
@@ -41,8 +41,8 @@ const SidebarItem = ({ to, icon, label }) => (
       }`
     }
   >
-    <span className="lg:ml-8 md:ml-8 ml-6 mt-5">{icon}</span>
-    <p className="hidden md:block lg:block mt-5">{label}</p>
+    <span className="ml-6 mt-5">{icon}</span>
+    <p className="mt-5">{label}</p>
   </NavLink>
 );
 
