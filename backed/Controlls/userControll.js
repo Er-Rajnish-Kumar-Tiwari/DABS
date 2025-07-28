@@ -329,7 +329,7 @@ const paymentRazorpay = async (req, res) => {
 const verifyPayment = async (req, res) => {
   try {
     const {razorpay_order_id}=req.body;
-    const orderInfo=await razorpayInstance.order.fetch(razorpay_order_id);
+    const orderInfo=await razorpayInstance.orders.fetch(razorpay_order_id);
 
     if(orderInfo.status==='paid'){
       await appointModels.findByIdAndUpdate(orderInfo.receipt,{payment:ture});
