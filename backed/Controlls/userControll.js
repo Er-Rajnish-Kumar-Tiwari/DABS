@@ -4,7 +4,8 @@ const validator = require("validator");
 const { userModels } = require("../Models/userModel");
 const { doctorModels } = require("../Models/doctorModel");
 const { appointModels } = require("../Models/appointmentModel");
-const cloudinary=require("cloudinary").v2;
+const cloudinary = require("cloudinary").v2;
+const razorpay = require("razorpay");
 
 const isVaild = (pass) => {
   const minLength = 8;
@@ -100,22 +101,27 @@ const getProfileData = async (req, res) => {
     const userId = req.userId;
 
     if (!userId) {
-      return res.status(400).json({ Status: "400", Messege: "User ID missing in request." });
+      return res
+        .status(400)
+        .json({ Status: "400", Messege: "User ID missing in request." });
     }
 
     const userData = await userModels.findById(userId).select("-password");
 
     if (!userData) {
-      return res.status(404).json({ Status: "404", Messege: "User not found." });
+      return res
+        .status(404)
+        .json({ Status: "404", Messege: "User not found." });
     }
 
     res.status(200).json({ Status: "200", userData });
   } catch (error) {
     console.error("Get Profile Error:", error.message);
-    res.status(500).json({ Status: "500", Messege: "Server error", Error: error.message });
+    res
+      .status(500)
+      .json({ Status: "500", Messege: "Server error", Error: error.message });
   }
 };
-
 
 const updataProfile = async (req, res) => {
   try {
@@ -141,7 +147,8 @@ const updataProfile = async (req, res) => {
 
     // Parse address if it's a JSON string
     try {
-      updateData.address = typeof address === "string" ? JSON.parse(address) : address;
+      updateData.address =
+        typeof address === "string" ? JSON.parse(address) : address;
     } catch (err) {
       return res.status(400).json({
         Status: "400",
@@ -176,80 +183,67 @@ const updataProfile = async (req, res) => {
   }
 };
 
-const bookAppointments=async(req,res)=>{
-
+const bookAppointments = async (req, res) => {
   try {
-    const {docId,slotDate,slotTime}=req.body;
+    const { docId, slotDate, slotTime } = req.body;
     const userId = req.userId;
 
-    const docData=await doctorModels.findById(docId).select("-password");
+    const docData = await doctorModels.findById(docId).select("-password");
 
-    if(!docData.avaiable){
-      res.json({Status:"500",Messege:"Doctor not avaiable"});
+    if (!docData.avaiable) {
+      res.json({ Status: "500", Messege: "Doctor not avaiable" });
     }
 
-    let slots_booked=docData.book_slot;
-    
-    // checking slot avaiable or not
-    if(slots_booked[slotDate]){
+    let slots_booked = docData.book_slot;
 
-      if(slots_booked[slotDate].includes(slotTime)){
-        return res.json({Status:"500",Messege:"Slot not avaiable"});
-      }
-      else {
+    // checking slot avaiable or not
+    if (slots_booked[slotDate]) {
+      if (slots_booked[slotDate].includes(slotTime)) {
+        return res.json({ Status: "500", Messege: "Slot not avaiable" });
+      } else {
         slots_booked[slotDate].push(slotTime);
       }
-
-    }
-    else {
-      slots_booked[slotDate]=[];
+    } else {
+      slots_booked[slotDate] = [];
       slots_booked[slotDate].push(slotTime);
     }
 
-    const userData=await userModels.findById(userId).select("-password");
+    const userData = await userModels.findById(userId).select("-password");
     delete docData.book_slot;
 
-    const appointmentData={
+    const appointmentData = {
       userId,
       docId,
       userData,
       docData,
       slotDate,
       slotTime,
-      amount:docData.fees,
-      date:Date.now()
+      amount: docData.fees,
+      date: Date.now(),
     };
 
-    const newAppointments=new appointModels(appointmentData);
+    const newAppointments = new appointModels(appointmentData);
     await newAppointments.save();
 
-    await doctorModels.findByIdAndUpdate(docId,{book_slot: slots_booked});
+    await doctorModels.findByIdAndUpdate(docId, { book_slot: slots_booked });
 
-    res.json({Status:"200", Message:"Appoinment Booked"});
-    
-  }
-  catch (error) {
+    res.json({ Status: "200", Message: "Appoinment Booked" });
+  } catch (error) {
     console.log(error.message);
-    res.json({Status:"404",Messege:error.message});  
+    res.json({ Status: "404", Messege: error.message });
   }
-
 };
 
-
-const getAppointments=async(req,res)=>{
-
+const getAppointments = async (req, res) => {
   try {
-    const userId=req.userId;
-    const appointments=await appointModels.find({userId});
-    res.json({Status:"200",appointments});
-  }
-  catch (error) {
+    const userId = req.userId;
+    const appointments = await appointModels.find({ userId });
+    res.json({ Status: "200", appointments });
+  } catch (error) {
     console.log(error.message);
-    res.json({Status:"404",Messege:error.message});
+    res.json({ Status: "404", Messege: error.message });
   }
-
 };
-
 
 const canelAppointment = async (req, res) => {
   try {
@@ -281,18 +275,66 @@ const canelAppointment = async (req, res) => {
 
     let book_slot = doctorData.book_slot;
     if (book_slot[slotDate]) {
-      book_slot[slotDate] = book_slot[slotDate].filter(e => e !== slotTime);
+      book_slot[slotDate] = book_slot[slotDate].filter((e) => e !== slotTime);
     }
 
     await doctorModels.findByIdAndUpdate(docId, { book_slot });
 
     res.json({ Status: "200", Messege: "Appointment Cancelled" });
-
   } catch (error) {
     console.log(error.message);
-    res.json({ Status: "500", Messege: "Internal Server Error", Error: error.message });
+    res.json({
+      Status: "500",
+      Messege: "Internal Server Error",
+      Error: error.message,
+    });
   }
 };
 
+const razorpayInstance = new razorpay({
+  key_id: process.env.RAZOR_ID,
+  key_secret: process.env.RAZOR_PASS,
+});
 
-module.exports = { createToken, registerUser, loginUser, getProfileData , updataProfile,bookAppointments ,getAppointments,canelAppointment};
+const paymentRazorpay = async (req, res) => {
+  try {
+    const { appointmentId } = req.body;
+    const appointmentData = await appointModels.findById(appointmentId);
+
+    if (!appointmentData || appointmentData.cancellled) {
+      return res.json({
+        Status: "404",
+        Messege: "Appointment Cancelled or not found",
+      });
+    }
+
+    const options = {
+      amount: appointmentData.amount,
+      currency: "INR",
+      receipt: appointmentId,
+    };
+
+    const order = await razorpayInstance.orders.create(options);
+    res.json({ Status: "200", order });
+
+  } catch (error) {
+    console.log(error.message);
+    res.json({
+      Status: "500",
+      Messege: "Internal Server Error",
+      Error: error.message,
+    });
+  }
+};
+
+module.exports = {
+  createToken,
+  registerUser,
+  loginUser,
+  getProfileData,
+  updataProfile,
+  bookAppointments,
+  getAppointments,
+  canelAppointment,
+  paymentRazorpay
+};

@@ -1,5 +1,5 @@
 const express=require("express");
-const { registerUser, loginUser, getProfileData, updataProfile, bookAppointments, getAppointments, canelAppointment } = require("../Controlls/userControll");
+const { registerUser, loginUser, getProfileData, updataProfile, bookAppointments, getAppointments, canelAppointment, paymentRazorpay } = require("../Controlls/userControll");
 const { authUser } = require("../Middleware/authUser");
 const upload = require("../Config/multer");
 const userRouter=express.Router();
@@ -11,5 +11,6 @@ userRouter.post("/updataProfile",upload.single("image"),authUser,updataProfile);
 userRouter.post("/appointmentBook",authUser,bookAppointments);
 userRouter.get("/listAppointments",authUser,getAppointments);
 userRouter.post("/canelAppointment",authUser,canelAppointment);
+userRouter.post("/payment",authUser,paymentRazorpay);
 
 module.exports={userRouter};
