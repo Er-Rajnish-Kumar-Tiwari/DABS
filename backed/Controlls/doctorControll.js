@@ -4,6 +4,7 @@ const { doctorModels } = require("../Models/doctorModel");
 const cloudinary=require("cloudinary").v2;
 const jwt=require("jsonwebtoken");
 const { json } = require("body-parser");
+const { appointModels } = require("../Models/appointmentModel");
 
 // Password checking functions
 const isVaild = (pass) => {
@@ -151,4 +152,16 @@ const changeAvailablity = async (req, res) => {
   }
 };
 
-module.exports={addDoctor,removeDoctor,allDoctor,adminLogin,changeAvailablity};
+const allAppointments=async(req,res)=>{
+
+    try {
+      const appointments=await appointModels.find();
+      res.json({Status:"200",appointments});  
+    }
+    catch (error) {
+        console.log(error.message);
+        res.json({ Status: "400", Messege: "Some error", error: error });
+    }
+};
+
+module.exports={addDoctor,removeDoctor,allDoctor,adminLogin,changeAvailablity,allAppointments};
