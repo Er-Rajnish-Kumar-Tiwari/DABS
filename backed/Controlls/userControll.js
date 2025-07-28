@@ -6,6 +6,7 @@ const { doctorModels } = require("../Models/doctorModel");
 const { appointModels } = require("../Models/appointmentModel");
 const cloudinary = require("cloudinary").v2;
 const razorpay = require("razorpay");
+const crypto=require("crypto");
 
 const isVaild = (pass) => {
   const minLength = 8;
