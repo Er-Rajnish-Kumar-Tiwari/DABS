@@ -5,6 +5,7 @@ import { AdminContext } from "../Context/adminContext";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { DoctorContext } from "../Context/doctorContext";
 
 const LoginPage = ({
   setShowLoginCard,
@@ -18,6 +19,7 @@ const LoginPage = ({
   const navigate=useNavigate();
 
   const { setAToken, atoken } = useContext(AdminContext);
+  const {dtoken,setDToken}=useContext(DoctorContext);
 
   useEffect(() => {
     if (atoken) {
@@ -28,7 +30,7 @@ const LoginPage = ({
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const route = state === "Admin" ? "/adminLogin" : "/doctorLogin";
+      const route = state === "Admin" ? "/adminLogin" : "/drLogin";
       const response = await axios.post(
         `https://dabs-backend.onrender.com${route}`,
         { email, password }
@@ -43,11 +45,27 @@ const LoginPage = ({
         setPassword("");
         navigate("/dashboard");
         toast.success(response.data.Messege);
-      } else if (response.data.Messege === "Wrong admin details") {
+      }
+      else if (response.data.Messege === "Wrong admin details") {
         toast.error(response.data.Messege + " Try again!");
         setEmail("");
         setPassword("");
-      } else {
+      }
+      else if(response.data.Messege==="Doctor login successfully"){
+        setDToken(response.data.dtoken);
+        localStorage.setItem("dtoken", response.data.dtoken);
+        setIsLoggedIn(true);
+        setShowLoginCard(false);
+        setEmail("");
+        setPassword("");
+        toast.success(response.data.Messege);
+      } 
+      else if (response.data.Messege === "Wrong password" || response.data.Messege === "Invaild details") {
+        toast.error(response.data.Messege + " Try again!");
+        setEmail("");
+        setPassword("");
+      }
+      else {
         toast.warning("Something went wrong with the network!");
       }
     } catch (error) {
