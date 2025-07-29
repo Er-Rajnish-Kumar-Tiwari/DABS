@@ -1,5 +1,5 @@
 const express=require("express");
-const { addDoctor, removeDoctor, allDoctor, adminLogin, changeAvailablity, allAppointments } = require("../Controlls/doctorControll");
+const { addDoctor, removeDoctor, allDoctor, adminLogin, changeAvailablity, allAppointments, canelAppointment } = require("../Controlls/doctorControll");
 const upload = require("../Config/multer");
 const { authAdmin } = require("../Middleware/authAdmin");
 const doctorRoute=express.Router();
@@ -11,5 +11,6 @@ doctorRoute.post("/availablity",authAdmin,changeAvailablity);
 doctorRoute.get("/doctorList",allDoctor);
 doctorRoute.post("/adminLogin",adminLogin);
 doctorRoute.get("/allAppointments",authAdmin,allAppointments);
+doctorRoute.post("/cancelByAdmin",authAdmin,canelAppointment);
 
 module.exports=doctorRoute;

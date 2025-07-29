@@ -87,20 +87,6 @@ const addDoctor=async(req,res)=>{
 };
 
 
-// Remove doctor with his all details
-const removeDoctor=async(req,res)=>{
-
-    try {
-        
-    }
-
-    catch (error) {
-        res.json({Status:"400",Messege:"Some error",error:error});
-    }
-
-};
-
-
 // View all the doctors list 
 const allDoctor=async(req,res)=>{
 
@@ -164,4 +150,41 @@ const allAppointments=async(req,res)=>{
     }
 };
 
-module.exports={addDoctor,removeDoctor,allDoctor,adminLogin,changeAvailablity,allAppointments};
+const canelAppointment = async (req, res) => {
+  try {
+    const { appointmentId } = req.body;
+
+    if (!appointmentId) {
+      return res.json({ Status: "400", Messege: "appointmentId is required" });
+    }
+
+    const appointmentData = await appointModels.findById(appointmentId);
+
+    if (!appointmentData) {
+      return res.json({ Status: "404", Messege: "Appointment not found" });
+    }
+
+    await appointModels.findByIdAndUpdate(appointmentId, { cancellled: true });
+
+    const { docId, slotDate, slotTime } = appointmentData;
+    const doctorData = await doctorModels.findById(docId);
+
+    let book_slot = doctorData.book_slot;
+    if (book_slot[slotDate]) {
+      book_slot[slotDate] = book_slot[slotDate].filter((e) => e !== slotTime);
+    }
+
+    await doctorModels.findByIdAndUpdate(docId, { book_slot });
+
+    res.json({ Status: "200", Messege: "Appointment Cancelled" });
+  } catch (error) {
+    console.log(error.message);
+    res.json({
+      Status: "500",
+      Messege: "Internal Server Error",
+      Error: error.message,
+    });
+  }
+};
+
+module.exports={addDoctor,removeDoctor,allDoctor,adminLogin,changeAvailablity,allAppointments,canelAppointment};
