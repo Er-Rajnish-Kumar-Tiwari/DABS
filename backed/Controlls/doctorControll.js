@@ -1,10 +1,11 @@
-const validator=require("validator");
-const bcrypt=require("bcryptjs");
+const validator = require("validator");
+const bcrypt = require("bcryptjs");
 const { doctorModels } = require("../Models/doctorModel");
-const cloudinary=require("cloudinary").v2;
-const jwt=require("jsonwebtoken");
+const cloudinary = require("cloudinary").v2;
+const jwt = require("jsonwebtoken");
 const { json } = require("body-parser");
 const { appointModels } = require("../Models/appointmentModel");
+const { userModels } = require("../Models/userModel");
 
 // Password checking functions
 const isVaild = (pass) => {
@@ -14,7 +15,8 @@ const isVaild = (pass) => {
   const hasLowerCase = /[a-z]/;
   const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/;
 
-  const isValid = validator.isLength(pass, { min: minLength }) &&
+  const isValid =
+    validator.isLength(pass, { min: minLength }) &&
     hasNumber.test(pass) &&
     hasUpperCase.test(pass) &&
     hasLowerCase.test(pass) &&
@@ -23,107 +25,118 @@ const isVaild = (pass) => {
   return isValid;
 };
 
-
 // Add doctor with his all details
-const addDoctor=async(req,res)=>{
+const addDoctor = async (req, res) => {
+  const {
+    name,
+    email,
+    password,
+    speciality,
+    degree,
+    experience,
+    about,
+    fees,
+    address,
+  } = req.body;
+  const fileName = req.file;
 
-    const {name,email,password,speciality,degree,experience,about,fees,address}=req.body;
-    const fileName=req.file;
-
-    try {
-        
-        // check all data filled or not 
-        if(!name || !email || !password || !speciality || !degree || !experience || !about || !fees || !address){
-            return res.json({Status:"500",Messege:"Fills all data"});
-        }
-
-        // check email is vaild or not 
-        const vaildEmail=validator.isEmail(email);
-        if(!vaildEmail){
-            return res.json({Status:"500",Messsege:"Enter vaild email"});
-        }
-
-        // check password is vaild or not 
-        const vaildPass=isVaild(password);
-        if(!vaildPass){
-            return res.json({Status:"500", Messege:"Enter strong password"});
-        }
-
-        // generate secure password 
-        const salt=await bcrypt.genSalt(10);
-        const hashedPass=await bcrypt.hash(password,salt);
-
-        // upload file on cloudinary
-        const imageUpload=await cloudinary.uploader.upload(fileName.path,{resource_type:"image"});
-        const imageUrl=imageUpload.secure_url;
-
-        // store final informations 
-        const newDoctorData={
-            name:name,
-            email:email,
-            password:hashedPass,
-            image:imageUrl,
-            degree:degree,
-            speciality:speciality,
-            experience:experience,
-            address:JSON.parse(address),
-            fees:fees,
-            about:about,
-            date:Date.now()
-        };
-
-        // then create doctor account
-        const newDoctor=new doctorModels(newDoctorData);
-        await newDoctor.save();
-
-        res.json({Status:"200",Messege:"doctor added successfully",})
+  try {
+    // check all data filled or not
+    if (
+      !name ||
+      !email ||
+      !password ||
+      !speciality ||
+      !degree ||
+      !experience ||
+      !about ||
+      !fees ||
+      !address
+    ) {
+      return res.json({ Status: "500", Messege: "Fills all data" });
     }
 
-    catch (error) {
-        console.log(error);
-        res.json({Status:"400",Messege:"Some error",error:error});
+    // check email is vaild or not
+    const vaildEmail = validator.isEmail(email);
+    if (!vaildEmail) {
+      return res.json({ Status: "500", Messsege: "Enter vaild email" });
     }
 
+    // check password is vaild or not
+    const vaildPass = isVaild(password);
+    if (!vaildPass) {
+      return res.json({ Status: "500", Messege: "Enter strong password" });
+    }
+
+    // generate secure password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPass = await bcrypt.hash(password, salt);
+
+    // upload file on cloudinary
+    const imageUpload = await cloudinary.uploader.upload(fileName.path, {
+      resource_type: "image",
+    });
+    const imageUrl = imageUpload.secure_url;
+
+    // store final informations
+    const newDoctorData = {
+      name: name,
+      email: email,
+      password: hashedPass,
+      image: imageUrl,
+      degree: degree,
+      speciality: speciality,
+      experience: experience,
+      address: JSON.parse(address),
+      fees: fees,
+      about: about,
+      date: Date.now(),
+    };
+
+    // then create doctor account
+    const newDoctor = new doctorModels(newDoctorData);
+    await newDoctor.save();
+
+    res.json({ Status: "200", Messege: "doctor added successfully" });
+  } catch (error) {
+    console.log(error);
+    res.json({ Status: "400", Messege: "Some error", error: error });
+  }
 };
 
-
-// View all the doctors list 
-const allDoctor=async(req,res)=>{
-
-    try {
-        const alldoctors=await doctorModels.find().select("-password");
-        res.json({Status:"200",alldoctors});
-    }
-
-    catch (error) {
-        res.json({Status:"400",Messege:"Some error",error:error});
-        console.log(error);
-    }
-
+// View all the doctors list
+const allDoctor = async (req, res) => {
+  try {
+    const alldoctors = await doctorModels.find().select("-password");
+    res.json({ Status: "200", alldoctors });
+  } catch (error) {
+    res.json({ Status: "400", Messege: "Some error", error: error });
+    console.log(error);
+  }
 };
 
 // Login admin for add and delete doctor
-const adminLogin=async(req,res)=>{
-    const {email,password}=req.body;
+const adminLogin = async (req, res) => {
+  const { email, password } = req.body;
 
-    try {
-
-        if(email===process.env.Admin_Email && password===process.env.Admin_Password){
-            const token=jwt.sign(email+password,process.env.JWT_SECRET);
-            res.json({Status:"200",Messege:"Admin Login Successfully",token:token});
-        }
-        else{
-            res.json({Status:"500",Messege:"Wrong admin details"});
-        }
-        
+  try {
+    if (
+      email === process.env.Admin_Email &&
+      password === process.env.Admin_Password
+    ) {
+      const token = jwt.sign(email + password, process.env.JWT_SECRET);
+      res.json({
+        Status: "200",
+        Messege: "Admin Login Successfully",
+        token: token,
+      });
+    } else {
+      res.json({ Status: "500", Messege: "Wrong admin details" });
     }
-
-    catch (error) {
-        res.json({Status:"400",Messege:"Some error",error:error});
-    }
-
+  } catch (error) {
+    res.json({ Status: "400", Messege: "Some error", error: error });
+  }
 };
-
 
 const changeAvailablity = async (req, res) => {
   try {
@@ -138,16 +151,14 @@ const changeAvailablity = async (req, res) => {
   }
 };
 
-const allAppointments=async(req,res)=>{
-
-    try {
-      const appointments=await appointModels.find();
-      res.json({Status:"200",appointments});  
-    }
-    catch (error) {
-        console.log(error.message);
-        res.json({ Status: "400", Messege: "Some error", error: error });
-    }
+const allAppointments = async (req, res) => {
+  try {
+    const appointments = await appointModels.find();
+    res.json({ Status: "200", appointments });
+  } catch (error) {
+    console.log(error.message);
+    res.json({ Status: "400", Messege: "Some error", error: error });
+  }
 };
 
 const canelAppointment = async (req, res) => {
@@ -187,4 +198,39 @@ const canelAppointment = async (req, res) => {
   }
 };
 
-module.exports={addDoctor,allDoctor,adminLogin,changeAvailablity,allAppointments,canelAppointment};
+const dashboardData = async (req, res) => {
+
+  try {
+    const docData=await doctorModels.find();
+    const userData=await userModels.find();
+    const appData=await appointModels.find();
+
+    const dashData={
+        doctors:docData.length,
+        users:userData.length,
+        appointments:appData.length,
+        latestAppointments:appData.reverse().slice(0,5)
+    }
+
+    res.json({Status:"200",dashData});
+  } 
+  catch (error) {
+    console.log(error.message);
+    res.json({
+      Status: "500",
+      Messege: "Internal Server Error",
+      Error: error.message,
+    });
+  }
+
+};
+
+module.exports = {
+  addDoctor,
+  allDoctor,
+  adminLogin,
+  changeAvailablity,
+  allAppointments,
+  canelAppointment,
+  dashboardData
+};
