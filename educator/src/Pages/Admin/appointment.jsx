@@ -3,7 +3,7 @@ import { AdminContext } from "../../Context/adminContext";
 import { FaTimesCircle } from "react-icons/fa";
 
 const Appointment = () => {
-  const { getAppointments, appointments, atoken } = useContext(AdminContext);
+  const { getAppointments, appointments, atoken ,cancelAppointment} = useContext(AdminContext);
 
   useEffect(() => {
     if (atoken) {
@@ -61,7 +61,7 @@ const Appointment = () => {
                   </td>
                   <td className="py-3 px-4">₹{appointment?.amount || 0}</td>
                   <td className="py-3 px-4">
-                    <button className="text-red-500 hover:text-red-700 text-lg">
+                    <button className="text-red-500 hover:text-red-700 text-lg" onClick={()=>cancelAppointment(appointment._id)}>
                       <FaTimesCircle />
                     </button>
                   </td>
@@ -109,7 +109,7 @@ const Appointment = () => {
                   </p>
                   <p className="text-gray-500 text-sm">₹{appointment?.amount || 0}</p>
                 </div>
-                <button className="text-red-500 hover:text-red-700 text-xl">
+                <button className="text-red-500 hover:text-red-700 text-xl" onClick={()=>cancelAppointment(appointment._id)}>
                   <FaTimesCircle />
                 </button>
               </div>

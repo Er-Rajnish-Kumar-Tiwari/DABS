@@ -187,4 +187,4 @@ const canelAppointment = async (req, res) => {
   }
 };
 
-module.exports={addDoctor,removeDoctor,allDoctor,adminLogin,changeAvailablity,allAppointments,canelAppointment};
+module.exports={addDoctor,allDoctor,adminLogin,changeAvailablity,allAppointments,canelAppointment};
