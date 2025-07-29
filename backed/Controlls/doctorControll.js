@@ -6,6 +6,7 @@ const jwt = require("jsonwebtoken");
 const { json } = require("body-parser");
 const { appointModels } = require("../Models/appointmentModel");
 const { userModels } = require("../Models/userModel");
+const { createToken } = require("./userControll");
 
 // Password checking functions
 const isVaild = (pass) => {
@@ -225,6 +226,41 @@ const dashboardData = async (req, res) => {
 
 };
 
+const doctorLogin=async(req,res)=>{
+
+  try {
+    const {email,password}=req.body;
+    const doc=await doctorModels.findOne({email});
+
+    if(!doc){
+      return res.json({Status:"500",Messege:"Invaild details"});
+    }
+
+    const isMatch=await bcrypt.compare(password,doc.password);
+
+    if(!isMatch){
+      return res.json({Status:"500",Messege:"Wrong password"});
+    }
+
+    const dtoken=createToken(doc._id);
+
+      res.json({
+      Status: "200",
+      Messege: "Doctor login successfully",
+      dtoken:dtoken,
+    });
+  } 
+  catch (error) {
+    console.log(error.message);
+    res.json({
+      Status: "500",
+      Messege: "Internal Server Error",
+      Error: error.message,
+    });
+  }
+
+};
+
 module.exports = {
   addDoctor,
   allDoctor,
@@ -232,5 +268,6 @@ module.exports = {
   changeAvailablity,
   allAppointments,
   canelAppointment,
-  dashboardData
+  dashboardData,
+  doctorLogin
 };
