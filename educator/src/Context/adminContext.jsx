@@ -10,6 +10,7 @@ const AdminContextProvider = (props) => {
   const [atoken, setAToken] = useState("");
   const [doctorList, setDoctorList] = useState([]);
   const [appointments, setAppointments] = useState({});
+  const  [dashBoardData,setDashBoardData]=useState([]);
 
   useEffect(() => {
     const savedToken = localStorage.getItem("atoken");
@@ -99,7 +100,7 @@ const AdminContextProvider = (props) => {
 
     try {
       const response=await axios.post("https://dabs-backend.onrender.com/cancelByAdmin",{appointmentId},{headers: { atoken }});
-      console.log(response);
+
       if(response.data.Status==="200"){
         toast.success(response.data.Messege);
         getAppointments();
@@ -114,6 +115,25 @@ const AdminContextProvider = (props) => {
 
   };
 
+  const getDashboardData=async()=>{
+
+    try {
+      const response=await axios.get("https://dabs-backend.onrender.com/dashboard",{headers:{atoken}});
+      
+      if(response.data.dashData){
+        setDashBoardData(response.data.dashData);
+      }
+
+    } 
+    catch (error) {
+      toast.error(
+        error.response?.data?.Messege ||
+        "Something went wrong fetching Appointments"
+      );
+    }
+
+  }
+
   const value = {
     atoken,
     setAToken,
@@ -123,7 +143,7 @@ const AdminContextProvider = (props) => {
     changeAvailablity,
     getAppointments,
     appointments,
-    cancelAppointment
+    cancelAppointment,getDashboardData,dashBoardData
   };
 
   return (
