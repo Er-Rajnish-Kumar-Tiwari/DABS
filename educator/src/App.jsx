@@ -10,19 +10,24 @@ import AddDoctor from "./Pages/Admin/addDoctor";
 import DoctorList from "./Pages/Admin/doctorList";
 import Dashboard from "./Pages/Admin/dashboard";
 import Appointment from "./Pages/Admin/appointment";
+import { DoctorContext } from "./Context/doctorContext";
+import Sidebardr from "./Components/drSidebar";
 
 const App = () => {
   const navigate=useNavigate();
   const { setAToken, atoken } = useContext(AdminContext);
+  const {setDToken,dtoken}=useContext(DoctorContext);
   const [isLoggedIn, setIsLoggedIn] = useState(
-    () => !!localStorage.getItem("atoken")
+    () => !!localStorage.getItem("atoken") || localStorage.getItem("dtoken")
   );
   const [showLoginCard, setShowLoginCard] = useState(false);
 
   const handleLogout = () => {
     setIsLoggedIn(false);
     setAToken("");
+    setDToken("");
     localStorage.removeItem("atoken");
+    localStorage.removeItem("dtoken");
     toast.success("Logout Successfully!");
     navigate("/");
   };
@@ -39,6 +44,7 @@ const App = () => {
       {/* Sidebar and Main Content Layout */}
       <div className="flex flex-1">
         {atoken && <Sidebar/>}
+        {dtoken && <Sidebardr/>}
 
         {/* Routed Pages */}
         {atoken && (<div className="flex-1">
