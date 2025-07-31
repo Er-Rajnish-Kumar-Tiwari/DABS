@@ -263,11 +263,7 @@ const doctorLogin=async(req,res)=>{
 
 const getDoctorAppointments = async (req, res) => {
   try {
-    const { docId } = req.body;
-
-    if (!docId) {
-      return res.json({ Status: "400", Messege: "Doctor ID is required" });
-    }
+    const docId = req.doctor.id; //  access docId
 
     const appointments = await appointModels.find({ docId });
 
@@ -285,6 +281,7 @@ const getDoctorAppointments = async (req, res) => {
     });
   }
 };
+
 
 module.exports = {
   addDoctor,
