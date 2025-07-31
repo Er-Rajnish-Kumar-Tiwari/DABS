@@ -14,6 +14,6 @@ doctorRoute.get("/allAppointments",authAdmin,allAppointments);
 doctorRoute.post("/cancelByAdmin",authAdmin,canelAppointment);
 doctorRoute.get("/dashboard",authAdmin,dashboardData);
 doctorRoute.post("/drLogin",doctorLogin);
-doctorRoute.get("/getDoctorAppointments",authDoctor,getDoctorAppointments);
+doctorRoute.post("/getDoctorAppointments",authDoctor,getDoctorAppointments);
 
 module.exports=doctorRoute;
