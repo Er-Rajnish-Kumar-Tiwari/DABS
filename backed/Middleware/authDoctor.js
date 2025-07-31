@@ -13,7 +13,7 @@ const authDoctor = async (req, res, next) => {
     next();
 
   } catch (error) {
-    res.json({ Status: "400", Messege: "Some error in API", Error: error });
+    res.json({ Status: "400", Messege: "Some error in API", Error: error.message });
   }
 };
 
