@@ -261,6 +261,31 @@ const doctorLogin=async(req,res)=>{
 
 };
 
+const getDoctorAppointments = async (req, res) => {
+  try {
+    const docId = req.docId;
+
+    if (!docId) {
+      return res.json({ Status: "400", Messege: "Doctor ID is required" });
+    }
+
+    const appointments = await appointModels.find({ docId });
+
+    if (appointments.length === 0) {
+      return res.json({ Status: "404", Messege: "No appointments found" });
+    }
+
+    res.json({ Status: "200", appointments });
+  } catch (error) {
+    console.log(error.message);
+    res.json({
+      Status: "500",
+      Messege: "Internal Server Error",
+      Error: error.message,
+    });
+  }
+};
+
 module.exports = {
   addDoctor,
   allDoctor,
@@ -269,5 +294,6 @@ module.exports = {
   allAppointments,
   canelAppointment,
   dashboardData,
-  doctorLogin
+  doctorLogin,
+  getDoctorAppointments
 };
