@@ -268,7 +268,7 @@ const getDoctorAppointments = async (req, res) => {
     const appointments = await appointModels.find({ docId });
 
     if (appointments.length === 0) {
-      return res.json({ Status: "404", Messege: "No appointments found" });
+      return res.json({ Status: "404", Messege: "No appointments found" ,docId});
     }
 
     res.json({ Status: "200", appointments });
