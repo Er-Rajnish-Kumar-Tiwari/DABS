@@ -263,7 +263,7 @@ const doctorLogin=async(req,res)=>{
 
 const getDoctorAppointments = async (req, res) => {
   try {
-    const docId = req.docId;
+    const { docId } = req.body;
 
     if (!docId) {
       return res.json({ Status: "400", Messege: "Doctor ID is required" });
