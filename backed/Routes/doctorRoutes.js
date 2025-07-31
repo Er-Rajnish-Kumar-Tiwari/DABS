@@ -2,6 +2,7 @@ const express=require("express");
 const { addDoctor, allDoctor, adminLogin, changeAvailablity, allAppointments, canelAppointment, dashboardData, doctorLogin, getDoctorAppointments } = require("../Controlls/doctorControll");
 const upload = require("../Config/multer");
 const { authAdmin } = require("../Middleware/authAdmin");
+const { authDoctor } = require("../Middleware/authDoctor");
 const doctorRoute=express.Router();
 
 doctorRoute.post("/addDoctor",authAdmin,upload.single("image"),addDoctor);
