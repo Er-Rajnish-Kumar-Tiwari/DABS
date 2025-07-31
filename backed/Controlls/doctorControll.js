@@ -263,7 +263,7 @@ const doctorLogin=async(req,res)=>{
 
 const getDoctorAppointments = async (req, res) => {
   try {
-    const docId = req.doctor.id; //  access docId
+    const docId = req.docId; //  access docId
 
     const appointments = await appointModels.find({ docId });
 
