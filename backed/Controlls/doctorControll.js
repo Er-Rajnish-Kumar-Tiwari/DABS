@@ -200,22 +200,20 @@ const canelAppointment = async (req, res) => {
 };
 
 const dashboardData = async (req, res) => {
-
   try {
-    const docData=await doctorModels.find();
-    const userData=await userModels.find();
-    const appData=await appointModels.find();
+    const docData = await doctorModels.find();
+    const userData = await userModels.find();
+    const appData = await appointModels.find();
 
-    const dashData={
-        doctors:docData.length,
-        users:userData.length,
-        appointments:appData.length,
-        latestAppointments:appData.reverse().slice(0,5)
-    }
+    const dashData = {
+      doctors: docData.length,
+      users: userData.length,
+      appointments: appData.length,
+      latestAppointments: appData.reverse().slice(0, 5),
+    };
 
-    res.json({Status:"200",dashData});
-  } 
-  catch (error) {
+    res.json({ Status: "200", dashData });
+  } catch (error) {
     console.log(error.message);
     res.json({
       Status: "500",
@@ -223,34 +221,31 @@ const dashboardData = async (req, res) => {
       Error: error.message,
     });
   }
-
 };
 
-const doctorLogin=async(req,res)=>{
-
+const doctorLogin = async (req, res) => {
   try {
-    const {email,password}=req.body;
-    const doc=await doctorModels.findOne({email});
+    const { email, password } = req.body;
+    const doc = await doctorModels.findOne({ email });
 
-    if(!doc){
-      return res.json({Status:"500",Messege:"Invaild details"});
+    if (!doc) {
+      return res.json({ Status: "500", Messege: "Invaild details" });
     }
 
-    const isMatch=await bcrypt.compare(password,doc.password);
+    const isMatch = await bcrypt.compare(password, doc.password);
 
-    if(!isMatch){
-      return res.json({Status:"500",Messege:"Wrong password"});
+    if (!isMatch) {
+      return res.json({ Status: "500", Messege: "Wrong password" });
     }
 
-    const dtoken=createToken(doc._id);
+    const dtoken = createToken(doc._id);
 
-      res.json({
+    res.json({
       Status: "200",
       Messege: "Doctor login successfully",
-      dtoken:dtoken,
+      dtoken: dtoken,
     });
-  } 
-  catch (error) {
+  } catch (error) {
     console.log(error.message);
     res.json({
       Status: "500",
@@ -258,7 +253,6 @@ const doctorLogin=async(req,res)=>{
       Error: error.message,
     });
   }
-
 };
 
 const getDoctorAppointments = async (req, res) => {
@@ -268,7 +262,11 @@ const getDoctorAppointments = async (req, res) => {
     const appointments = await appointModels.find({ docId });
 
     if (appointments.length === 0) {
-      return res.json({ Status: "404", Messege: "No appointments found" ,docId: docId});
+      return res.json({
+        Status: "404",
+        Messege: "No appointments found",
+        docId: docId,
+      });
     }
 
     res.json({ Status: "200", appointments });
@@ -282,101 +280,126 @@ const getDoctorAppointments = async (req, res) => {
   }
 };
 
-const appointmentCompleted=async(req,res)=>{
-
+const appointmentCompleted = async (req, res) => {
   try {
-    const {appointmentId}=req.body;
+    const { appointmentId } = req.body;
     const docId = req.body.docId;
 
     const appointmentData = await appointModels.findById(appointmentId);
 
-    if(appointmentData && appointmentData.docId === docId) {
-      await appointModels.findByIdAndUpdate(appointmentId, { isCompleted: true });
-      return res.json({ Status: "200", Messege: "Appointment marked as completed" });
+    if (appointmentData && appointmentData.docId === docId) {
+      await appointModels.findByIdAndUpdate(appointmentId, {
+        isCompleted: true,
+      });
+      return res.json({
+        Status: "200",
+        Messege: "Appointment marked as completed",
+      });
+    } else {
+      return res.json({
+        Status: "404",
+        Messege: "Appointment not found or does not belong to this doctor",
+      });
     }
-    else {
-      return res.json({ Status: "404", Messege: "Appointment not found or does not belong to this doctor" });
-    }
-  } 
-  catch (error) {
+  } catch (error) {
     console.log(error.message);
     res.json({
       Status: "500",
       Messege: "Internal Server Error",
       Error: error.message,
-    }); 
+    });
   }
-
-}
-
-const cancelDrAppointment=async(req,res)=>{
-
-  try {
-    const {appointmentId}=req.body;
-    const docId = req.body.docId;
-
-    const appointmentData = await appointModels.findById(appointmentId);
-
-    if(appointmentData && appointmentData.docId === docId) {
-      await appointModels.findByIdAndUpdate(appointmentId, { cancellled: true });
-      return res.json({ Status: "200", Messege: "Appointment Cancelled" });
-    }
-    else {
-      return res.json({ Status: "404", Messege: "Appointment not cancel" });
-    }
-  } 
-  catch (error) {
-    console.log(error.message);
-    res.json({
-      Status: "500",
-      Messege: "Internal Server Error",
-      Error: error.message,
-    }); 
-  }
-
 };
 
-const doctorDashboard=async(req,res)=>{
+const cancelDrAppointment = async (req, res) => {
+  try {
+    const { appointmentId } = req.body;
+    const docId = req.body.docId;
 
+    const appointmentData = await appointModels.findById(appointmentId);
+
+    if (appointmentData && appointmentData.docId === docId) {
+      await appointModels.findByIdAndUpdate(appointmentId, {
+        cancellled: true,
+      });
+      return res.json({ Status: "200", Messege: "Appointment Cancelled" });
+    } else {
+      return res.json({ Status: "404", Messege: "Appointment not cancel" });
+    }
+  } catch (error) {
+    console.log(error.message);
+    res.json({
+      Status: "500",
+      Messege: "Internal Server Error",
+      Error: error.message,
+    });
+  }
+};
+
+const doctorDashboard = async (req, res) => {
   try {
     const docId = req.body.docId;
-    const appointments=await appointModels.find({docId});
-    let earnings=0;
+    const appointments = await appointModels.find({ docId });
+    let earnings = 0;
 
-    appointments.map(item=>{
-      if(item.isCompleted || item.payment){
-        earnings+=item.amount;
+    appointments.map((item) => {
+      if (item.isCompleted || item.payment) {
+        earnings += item.amount;
       }
     });
 
-    let patients=[];
+    let patients = [];
 
-    appointments.map(item=>{
-      if(!patients.includes(item.userId)){
+    appointments.map((item) => {
+      if (!patients.includes(item.userId)) {
         patients.push(item.userId);
       }
     });
 
-    const dashData={
+    const dashData = {
       earnings,
-      appointments:appointments.length,
-      patients:patients.length,
-      latestAppointments:appointments.reverse().slice(0,5)
-    }
+      appointments: appointments.length,
+      patients: patients.length,
+      latestAppointments: appointments.reverse().slice(0, 5),
+    };
 
-    res.json({Status:"200",dashData});
-    
-  } 
-  catch (error) {
+    res.json({ Status: "200", dashData });
+  } catch (error) {
     console.log(error.message);
     res.json({
       Status: "500",
       Messege: "Internal Server Error",
       Error: error.message,
-    }); 
+    });
   }
+};
 
-}
+const getDrProfileData = async (req, res) => {
+  try {
+    const docId = req.body.docId;
+
+    if (!docId) {
+      return res
+        .status(400)
+        .json({ Status: "400", Messege: "User ID missing in request." });
+    }
+
+    const doctorData = await doctorModels.findById(docId).select("-password");
+
+    if (!doctorData) {
+      return res
+        .status(404)
+        .json({ Status: "404", Messege: "User not found." });
+    }
+
+    res.status(200).json({ Status: "200", doctorData });
+  } catch (error) {
+    console.error("Get Profile Error:", error.message);
+    res
+      .status(500)
+      .json({ Status: "500", Messege: "Server error", Error: error.message });
+  }
+};
 
 module.exports = {
   addDoctor,
@@ -390,5 +413,6 @@ module.exports = {
   getDoctorAppointments,
   appointmentCompleted,
   doctorDashboard,
-  cancelDrAppointment
+  cancelDrAppointment,
+  getDrProfileData,
 };
