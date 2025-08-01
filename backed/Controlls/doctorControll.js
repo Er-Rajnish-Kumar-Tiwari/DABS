@@ -309,6 +309,48 @@ const appointmentCompleted=async(req,res)=>{
 
 }
 
+const doctorDashboard=async(req,res)=>{
+
+  try {
+    const docId = req.body.docId;
+    const appointments=await appointModels.findById({docId});
+    let earnings=0;
+
+    appointments.map(item=>{
+      if(item.isCompleted || item.payment){
+        earnings+=item.amount;
+      }
+    });
+
+    let patients=[];
+
+    appointments.map(item=>{
+      if(!patients.includes(item.userId)){
+        patients.push(item.userId);
+      }
+    });
+
+    const dashData={
+      earnings,
+      appointments:appointments.length,
+      patients:patients.length,
+        latestAppointments:appointments.reverse().slice(0,5)
+    }
+
+    res.json({Status:"200",dashData});
+    
+  } 
+  catch (error) {
+    console.log(error.message);
+    res.json({
+      Status: "500",
+      Messege: "Internal Server Error",
+      Error: error.message,
+    }); 
+  }
+
+}
+
 module.exports = {
   addDoctor,
   allDoctor,
@@ -319,5 +361,6 @@ module.exports = {
   dashboardData,
   doctorLogin,
   getDoctorAppointments,
-  appointmentCompleted
+  appointmentCompleted,
+  doctorDashboard
 };
