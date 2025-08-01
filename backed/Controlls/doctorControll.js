@@ -313,7 +313,7 @@ const doctorDashboard=async(req,res)=>{
 
   try {
     const docId = req.body.docId;
-    const appointments=await appointModels.findById({docId});
+    const appointments=await appointModels.find({docId});
     let earnings=0;
 
     appointments.map(item=>{
@@ -334,7 +334,7 @@ const doctorDashboard=async(req,res)=>{
       earnings,
       appointments:appointments.length,
       patients:patients.length,
-        latestAppointments:appointments.reverse().slice(0,5)
+      latestAppointments:appointments.reverse().slice(0,5)
     }
 
     res.json({Status:"200",dashData});
