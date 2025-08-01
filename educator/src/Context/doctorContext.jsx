@@ -25,7 +25,6 @@ const DoctorContextProvider = (props) => {
           }
         );
 
-        console.log(response.data);
         const allAppointments = response.data.appointments;
   
         // Filter only paid and not cancelled appointments
@@ -63,7 +62,26 @@ const DoctorContextProvider = (props) => {
 
   };
 
-  const value = { dtoken, setDToken ,getAppointments, appointments ,cancelAppointment};
+  const markCompleted = async (appointmentId) => {
+    try {
+      const response = await axios.post(
+        "https://dabs-backend.onrender.com/appointmentCompleted",
+        { appointmentId },
+        { headers: { dtoken } }
+      );
+
+      if (response.data.Status === "200") {
+        toast.success(response.data.Messege);
+        getAppointments();
+      }
+    } catch (error) {
+      toast.error(
+        error.response?.data?.Messege || "Something went wrong marking as completed"
+      );
+    }
+  };
+
+  const value = { dtoken, setDToken ,getAppointments, appointments ,cancelAppointment, markCompleted};
 
   return (
     <DoctorContext.Provider value={value}>
