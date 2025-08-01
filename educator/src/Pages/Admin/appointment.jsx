@@ -105,7 +105,7 @@ const Appointment = () => {
               <div className="flex justify-between items-center mt-2 border-t pt-2">
                 <div>
                   <p className="font-medium text-gray-700">
-                    Dr. {appointment?.docData?.name}
+                     {appointment?.docData?.name}
                   </p>
                   <p className="text-gray-500 text-sm">₹{appointment?.amount || 0}</p>
                 </div>

@@ -57,7 +57,7 @@ const DoctorAppointments = () => {
                           alt="doctor"
                           className="w-8 h-8 rounded-full"
                         />
-                        Dr. {appointment?.docData?.name}
+                        {appointment?.docData?.name}
                       </td>
                       <td className="py-3 px-4">₹{appointment?.amount || 0}</td>
                       <td className="py-3 px-4">
