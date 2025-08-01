@@ -12,6 +12,9 @@ import Dashboard from "./Pages/Admin/dashboard";
 import Appointment from "./Pages/Admin/appointment";
 import { DoctorContext } from "./Context/doctorContext";
 import Sidebardr from "./Components/drSidebar";
+import DoctorDashboard from "./Pages/Doctor/doctorDashboard";
+import DoctorAppointments from "./Pages/Doctor/doctorAppointments";
+import DoctorProfile from "./Pages/Doctor/doctorProfile";
 
 const App = () => {
   const navigate=useNavigate();
@@ -54,6 +57,15 @@ const App = () => {
             <Route path="/doctor-list" element={<DoctorList />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/appointment" element={<Appointment />} />
+          </Routes>
+        </div>)}
+        {/* Routed Pages */}
+        {dtoken && (<div className="flex-1">
+          <Routes>
+            <Route path="/" element={<></>} />
+            <Route path="/doctor-profile" element={<DoctorProfile />} />
+            <Route path="/doctor-dashboard" element={<DoctorDashboard />} />
+            <Route path="/doctor-appointments" element={<DoctorAppointments />} />
           </Routes>
         </div>)}
       </div>
