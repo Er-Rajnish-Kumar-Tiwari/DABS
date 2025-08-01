@@ -309,6 +309,33 @@ const appointmentCompleted=async(req,res)=>{
 
 }
 
+const cancelDrAppointment=async(req,res)=>{
+
+  try {
+    const {appointmentId}=req.body;
+    const docId = req.body.docId;
+
+    const appointmentData = await appointModels.findById(appointmentId);
+
+    if(appointmentData && appointmentData.docId === docId) {
+      await appointModels.findByIdAndUpdate(appointmentId, { cancellled: true });
+      return res.json({ Status: "200", Messege: "Appointment Cancelled" });
+    }
+    else {
+      return res.json({ Status: "404", Messege: "Appointment not cancel" });
+    }
+  } 
+  catch (error) {
+    console.log(error.message);
+    res.json({
+      Status: "500",
+      Messege: "Internal Server Error",
+      Error: error.message,
+    }); 
+  }
+
+};
+
 const doctorDashboard=async(req,res)=>{
 
   try {
@@ -362,5 +389,6 @@ module.exports = {
   doctorLogin,
   getDoctorAppointments,
   appointmentCompleted,
-  doctorDashboard
+  doctorDashboard,
+  cancelDrAppointment
 };
