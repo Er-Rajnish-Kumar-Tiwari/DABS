@@ -23,7 +23,7 @@ const DoctorAppointments = () => {
                   <th className="py-3 px-4">#</th>
                   <th className="py-3 px-4">Patient</th>
                   <th className="py-3 px-4">Date & Time</th>
-                  <th className="py-3 px-4">Doctor</th>
+                  <th className="py-3 px-4">Payment</th>
                   <th className="py-3 px-4">Fees</th>
                   <th className="py-3 px-4">Action</th>
                 </tr>
@@ -52,12 +52,7 @@ const DoctorAppointments = () => {
                         })}, {appointment?.slotTime}
                       </td>
                       <td className="py-3 px-4 flex items-center gap-2">
-                        <img
-                          src={appointment?.docData?.image || "https://via.placeholder.com/40"}
-                          alt="doctor"
-                          className="w-8 h-8 rounded-full"
-                        />
-                        {appointment?.docData?.name}
+                        {appointment.payment ? " ONLINE" : "CASH"}
                       </td>
                       <td className="py-3 px-4">₹{appointment?.amount || 0}</td>
                       <td className="py-3 px-4">

@@ -282,6 +282,32 @@ const getDoctorAppointments = async (req, res) => {
   }
 };
 
+const appointmentCompleted=async(req,res)=>{
+
+  try {
+    const {appointmentId}=req.body;
+    const docId = req.body.docId;
+
+    const appointmentData = await appointModels.findById(appointmentId);
+
+    if(appointmentData && appointmentData.docId === docId) {
+      await appointModels.findByIdAndUpdate(appointmentId, { isCompleted: true });
+      return res.json({ Status: "200", Messege: "Appointment marked as completed" });
+    }
+    else {
+      return res.json({ Status: "404", Messege: "Appointment not found or does not belong to this doctor" });
+    }
+  } 
+  catch (error) {
+    console.log(error.message);
+    res.json({
+      Status: "500",
+      Messege: "Internal Server Error",
+      Error: error.message,
+    }); 
+  }
+
+}
 
 module.exports = {
   addDoctor,
@@ -292,5 +318,6 @@ module.exports = {
   canelAppointment,
   dashboardData,
   doctorLogin,
-  getDoctorAppointments
+  getDoctorAppointments,
+  appointmentCompleted
 };
