@@ -8,6 +8,7 @@ const DoctorContextProvider = (props) => {
   const [dtoken, setDToken] = useState("");
   const [appointments, setAppointments] = useState({});
   const [dashBoardData, setDashBoardData] = useState([]);
+  const [profileData,setProfileData]=useState([]);
 
   useEffect(() => {
     const savedToken = localStorage.getItem("dtoken");
@@ -102,6 +103,29 @@ const DoctorContextProvider = (props) => {
     }
   };
 
+  const getProfile = async () => {
+  try {
+    const res = await axios.get(
+      "https://dabs-backend.onrender.com/drProfile",
+      {
+        headers: {
+          dtoken
+        },
+      }
+    );
+    console.log(res.data);
+
+    if (res.status === 200) {
+      setProfileData(res.data.userData);
+    } else {
+      toast.error("Unauthorized or session expired");
+    }
+  } catch (error) {
+    console.log(error.message);
+    toast.error("Error fetching profile data"+error.message);
+  }
+};
+
   const value = {
     dtoken,
     setDToken,
@@ -111,6 +135,9 @@ const DoctorContextProvider = (props) => {
     markCompleted,
     getDashboardData,
     dashBoardData,
+    getProfile,
+    profileData,
+    setProfileData
   };
 
   return (

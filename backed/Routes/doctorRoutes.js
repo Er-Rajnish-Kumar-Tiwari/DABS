@@ -1,5 +1,5 @@
 const express=require("express");
-const { addDoctor, allDoctor, adminLogin, changeAvailablity, allAppointments, canelAppointment, dashboardData, doctorLogin, getDoctorAppointments, appointmentCompleted, doctorDashboard, cancelDrAppointment, getDrProfileData } = require("../Controlls/doctorControll");
+const { addDoctor, allDoctor, adminLogin, changeAvailablity, allAppointments, canelAppointment, dashboardData, doctorLogin, getDoctorAppointments, appointmentCompleted, doctorDashboard, cancelDrAppointment, getDrProfileData, updateDrProfile } = require("../Controlls/doctorControll");
 const upload = require("../Config/multer");
 const { authAdmin } = require("../Middleware/authAdmin");
 const { authDoctor } = require("../Middleware/authDoctor");
@@ -19,5 +19,6 @@ doctorRoute.post("/cancelByDoctor",authDoctor,cancelDrAppointment);
 doctorRoute.post("/appointmentCompleted",authDoctor,appointmentCompleted);
 doctorRoute.get("/drDashboard",authDoctor,doctorDashboard);
 doctorRoute.get("/drProfile",authDoctor,getDrProfileData);
+doctorRoute.post("/updateProfile",authDoctor,updateDrProfile)
 
 module.exports=doctorRoute;

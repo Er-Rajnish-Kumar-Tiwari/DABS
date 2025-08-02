@@ -393,12 +393,32 @@ const getDrProfileData = async (req, res) => {
     }
 
     res.status(200).json({ Status: "200", doctorData });
-  } catch (error) {
+  } 
+  catch (error) {
     console.error("Get Profile Error:", error.message);
     res
       .status(500)
       .json({ Status: "500", Messege: "Server error", Error: error.message });
   }
+};
+
+const updateDrProfile=async(req,res)=>{
+
+  try {
+    const docId = req.body.docId;
+    const {avaiable,fees,address}=req.body;
+
+    await doctorModels.findByIdAndUpdate(docId,{fees,address,avaiable});
+    res.json({Status:"200",Messege:"Profile Updated"});
+  } 
+  catch (error) {
+    res.json({
+      Status: "500",
+      Messege: "Internal Server Error",
+      Error: error.message,
+    });
+  }
+
 };
 
 module.exports = {
@@ -415,4 +435,5 @@ module.exports = {
   doctorDashboard,
   cancelDrAppointment,
   getDrProfileData,
+  updateDrProfile
 };
