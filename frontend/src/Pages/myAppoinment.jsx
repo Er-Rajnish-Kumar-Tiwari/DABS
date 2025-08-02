@@ -120,10 +120,11 @@ const MyAppoinment = () => {
 
                 <div className='flex flex-col gap-3 mb-3 mr-3 justify-end'>
 
-                  { !iteam.cancellled && iteam.payment && <button className='px-8 py-2 border  border-gray-300 rounded-md bg-blue-700 outline-none text-white'>Paid</button>}
-                  { !iteam.cancellled && !iteam.payment && <button className='px-4 py-2 border  border-gray-300 rounded-md bg-blue-300 outline-none hover:bg-indigo-400 hover:scale-110 transition-all' onClick={()=>paymentRazorpay(iteam._id)}>Pay Here</button>}
-                  { !iteam.cancellled && !iteam.payment && <button className='px-8 py-2 border  border-gray-300 rounded-md outline-none bg-red-200 hover:bg-red-400 hover:scale-110 transition-all' onClick={()=>cancelAppointment(iteam._id)}>Cancel</button>}
-                  {iteam.cancellled && <button className='px-8 py-2 border-red-700 bg-red-700 text-white rounded'>Cancelled</button>}
+                  { !iteam.cancellled && iteam.payment && !iteam.isCompleted && <button className='px-8 py-2 border  border-gray-300 rounded-md bg-blue-700 outline-none text-white'>Paid</button>}
+                  { !iteam.cancellled && !iteam.payment && !iteam.isCompleted &&<button className='px-4 py-2 border  border-gray-300 rounded-md bg-blue-300 outline-none hover:bg-indigo-400 hover:scale-110 transition-all' onClick={()=>paymentRazorpay(iteam._id)}>Pay Here</button>}
+                  { !iteam.cancellled && !iteam.payment && !iteam.isCompleted && <button className='px-8 py-2 border  border-gray-300 rounded-md outline-none bg-red-200 hover:bg-red-400 hover:scale-110 transition-all' onClick={()=>cancelAppointment(iteam._id)}>Cancel</button>}
+                  { iteam.cancellled && <button className='px-8 py-2 border-red-700 bg-red-700 text-white rounded'>Cancelled</button>}
+                  { !iteam.cancellled && iteam.payment && iteam.isCompleted && <button className='px-8 py-2 border  border-gray-300 rounded-md bg-green-500 outline-none text-white'>Booked</button>}
                 </div>
 
               </div>

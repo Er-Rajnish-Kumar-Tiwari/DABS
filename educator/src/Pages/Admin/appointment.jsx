@@ -61,9 +61,9 @@ const Appointment = () => {
                   </td>
                   <td className="py-3 px-4">₹{appointment?.amount || 0}</td>
                   <td className="py-3 px-4">
-                    <button className="text-red-500 hover:text-red-700 text-lg" onClick={()=>cancelAppointment(appointment._id)}>
+                    { !appointment.isCompleted ?  <button className="text-red-500 hover:text-red-700 text-lg" onClick={()=>cancelAppointment(appointment._id)}>
                       <FaTimesCircle />
-                    </button>
+                    </button> : <span className="text-green-600 font-semibold">Booked</span>}
                   </td>
                 </tr>
               ))

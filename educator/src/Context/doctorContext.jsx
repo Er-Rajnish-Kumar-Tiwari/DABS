@@ -116,7 +116,7 @@ const DoctorContextProvider = (props) => {
     console.log(res.data);
 
     if (res.status === 200) {
-      setProfileData(res.data.userData);
+      setProfileData(res.data.doctorData);
     } else {
       toast.error("Unauthorized or session expired");
     }

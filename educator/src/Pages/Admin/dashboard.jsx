@@ -96,12 +96,12 @@ const Dashboard = () => {
                       </p>
                     </div>
                   </div>
-                  <button
+                  { !appointment.isCompleted ? <button
                     onClick={() => cancelAppointment(appointment._id)}
                     className="text-red-500 hover:text-red-600"
                   >
                     <MdCancel className="text-xl" />
-                  </button>
+                  </button> : <span className="text-green-600 font-semibold">Booked</span>}
                 </div>
               ))}
 

@@ -36,7 +36,7 @@ const Related = ({ docId, speciality }) => {
             <div className='p-3 bg-blue-50'>
               <div className='flex items-center gap-2 text-sm text-green-500'>
                 <div className='bg-green-500 h-2 w-2 rounded-full'></div>
-                <p>Available</p>
+                <p>{iteam.avaiable ? "Available" : "Not Available"}</p>
               </div>
               <p className='text-gray-900 text-lg font-medium'>{iteam.name}</p>
               <p className='text-gray-600 text-sm'>{iteam.speciality}</p>
